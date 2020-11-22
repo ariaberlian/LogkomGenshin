@@ -134,6 +134,7 @@ map :-
 
 %% EXPLORING
 %% ==============================================================
+%% TRUE
 setNotInBattle(X) :-
 	X = 1,
 	notInBattle(false),
@@ -142,6 +143,7 @@ setNotInBattle(X) :-
 	retract(enemy(_)),
 	asserta(enemy(null)),
 	!.
+%% FALSE
 setNotInBattle(X) :-
 	X = 0,
 	notInBattle(true),
@@ -166,25 +168,28 @@ writeArah(M) :-
 	write('East'),
 	!.
 
-
+%% WOLF
 setEnemy(X) :-
 	X = 0,
 	write('You found a Wolf!!!!'),
 	retract(enemy(_)),
 	asserta(enemy(wolf)),
 	!.
+%% SLIME
 setEnemy(X) :-
 	X = 1,
 	write('You found a Slime!!!!'),
 	retract(enemy(_)),
 	asserta(enemy(slime)),
 	!.
+%% GOBLIN
 setEnemy(X) :-
 	X = 2,
 	write('You found a Goblin!!!!'),
 	retract(enemy(_)),
 	asserta(enemy(goblin)),
 	!.
+%% DRAGON
 setEnemy(X) :-
 	X = 3,
 	write('Is it the final battle??!!!'),
@@ -192,12 +197,14 @@ setEnemy(X) :-
 	asserta(enemy(dragon)),
 	!.
 
+%% MENEMUKAN ENEMY
 foundEnemy(X, _) :-
 	X < 2,
 	setNotInBattle(0),
 	random(0, 2, Z),
 	setEnemy(Z),
 	!.
+%% TIDAK MENEMUKAN ENEMY
 foundEnemy(X, M) :-
 	X > 1,
 	writeArah(M),
@@ -240,6 +247,7 @@ run :-
 	write('Are you afraid ?!!'),
 	!.
 
+%% PORTAL 1
 teleport(X, Y) :-
 	pos(portal, X, Y),
 	X = 5,
@@ -251,6 +259,7 @@ teleport(X, Y) :-
 	map,
 	!.
 
+%% PORTAL 2
 teleport(X, Y) :-
 	pos(portal, X, Y),
 	X = 34,
