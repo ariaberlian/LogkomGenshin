@@ -12,6 +12,14 @@
 :- dynamic(job/1).
 :- dynamic(jobFound/1).
 
+:- dynamic(equipedAcc/4).
+:- dynamic(equipedWeap/4).
+:- dynamic(equipedHead/4).
+:- dynamic(equipedBoots/4).
+:- dynamic(equipedArmor/4).
+:- dynamic(equipedPOT/1).
+:- dynamic(currentHP/1).
+
 
 
 %% FACT
@@ -21,8 +29,6 @@ notInBattle(true).
 
 enemy(null).
 
-
-job(programmer).
 pos(player, 1, 1).
 pos(store, 7, 2).
 pos(boss, 20, 8).
@@ -72,27 +78,27 @@ weapon('Broom', 'Staff', 'int', '+',40).
 weapon('Harry Potters Magic Wand', 'Staff', 'int', '%', 25).
 weapon('Merlin', 'Staff', 'int', '+', 3000).
 weapon('Reforged Sandalwood Warden Staff', 'Staff', 'int', '+', 5500).
-weapon('Baseball Bat', 'None', 'atk', '+', 1).
+weapon('Baseball Bat', 'None', 'atk', '+', 40).
 
 % armor(name, stat, statType, statNum)
-armor('Wooden Armor', 'hp', '+', 100).
+armor('Wooden Armor', 'hp', '+', 400).
 armor('Silver Armor', 'hp', '%', 10).
-armor('Golden Armor', 'hp', '%', 15).
-armor('Divine Protection', 'hp', '%', 30).
+armor('Golden Armor', 'hp', '%', 30).
+armor('Divine Protection', 'hp', '%', 50).
 armor('Uniqlo Tshirt', 'hp', '+', 0).
 
 % head(name, stat, statType, statNum)
 head('Kreuzeck Bag Helmet', 'def', '+', 30).
 head('Cursed Helmet', 'def', '%', 20).
-head('Sky Guardian Helmet', 'def', '+', 200).
+head('Sky Guardian Helmet', 'def', '+', 8000).
 head('Honda SNI Helmet', 'def', '%', 50).
 head('Baseball Helmet', 'def', '+', 0).
 
 % boots(name, stat, statType, statNum).
-boots('Wooden Bakiak', 'hp', '+', 100).
+boots('Wooden Bakiak', 'hp', '+', 150).
 boots('Lightning Vans', 'hp', '%', 5).
-boots('Adidas x Nike', 'hp', '+', 800).
-boots('Holly Swallow', 'hp', '%', 10).
+boots('Adidas x Nike', 'hp', '+', 4000).
+boots('Holly Swallow', 'hp', '%', 20).
 boots('Sendal Swallow', 'hp', '+', 1).
 
 % accessory(name, stat, statType, statNum).
@@ -162,6 +168,14 @@ grade('SS', 'Fiesta SpicyChikenWings', 10).
 bag(['Baseball Bat', 'Uniqlo Tshirt', 'Baseball Helmet', 'Sendal Swallow', 'Ali Ring','Health Potion Small','Health Potion Small','Health Potion Small','Health Potion Small','Health Potion Small']).
 % gold(300).
 
+% Equiped Equipment
+% equipedWeap(Name, Stat, StatType, StatNum)
+equipedWeap('Baseball Bat', 'atk', '+', 1).
+equipedArmor('Uniqlo Tshirt', 'hp', '+', 0).
+equipedHead('Baseball Helmet', 'def', '+', 0).
+equipedBoots('Sendal Swallow', 'hp', '+', 1). 
+equipedAcc('Ali Ring', 'atk', '+', 1). 
+
 
 %% MAIN MENU
 %% ==============================================================
@@ -173,10 +187,16 @@ start :-
 	retract(notInBattle(_)),
 	retract(started(_)),
 
+    retractall(currentHP(_)),
     retractall(ekspi(_)),
     retractall(gold(_)),
-    asserta(ekspi(3600)),
+    retractall(job(_)),
+
+    asserta(job(programmer)),
+    asserta(ekspi(0)),
     asserta(gold(300)),
+    finalSTATS(_,_,_,HP),
+    asserta(currentHP(HP)),
 	asserta(pos(player, 1, 1)),
 	asserta(enemy(null)),
 	asserta(notInBattle(true)),
@@ -192,20 +212,14 @@ start :-
     write(' S     S  S       S    S      P S    S S S    S           P S       S     b S    O S'), nl,
     write('  "sss"   P sSSss P    P ` ss\'  P    P P P    P      ` ss\'  P sSSss P     P P    P P'), nl, nl,
 
-    write('Pada suatu hari yang cerah di negara Belzard, hiduplah seorang pemuda biasa yang sedang asik bermain baseball bersama temannya. *Ctankk* “HOMERUNNNN!!!”. Seorang anak teriak. Lalu pemuda bernama Issei berlari mengejar bola itu meskipun sudah keluar dari arena bermain. Dia terus berlari hingga berpapasan dengan truck-kun. Issei membuka mata. Dia melihat sesosok wanita cantik di depannya. Wanita itu berkata, “Sayang sekali, namun kau sudah mati. Sekarang kau punya dua pilihan, yaitu untuk pergi ke surga atau menjalani hidup baru di dunia yang baru.”. Tanpa pikir panjang, Issei menjawab, “Aku akan menjadi raja harem di dunia yang baru itu!”.'),nl,nl,
+    wr('Pada suatu hari yang cerah di negara Belzard, hiduplah seorang pemuda biasa yang sedang asik bermain baseball'),
+    wr('bersama temannya. *Ctankk* "HOMERUNNNN!!!". Seorang anak teriak. Lalu pemuda bernama Issei berlari mengejar'),
+    wr('bola itu meskipun sudah keluar dari arena bermain. Dia terus berlari hingga berpapasan dengan truck-kun.'),
+    wr('Issei membuka mata. Dia melihat sesosok wanita cantik di depannya.Wanita itu berkata, "Ara~ara aramaa~,'),
+    wr('Sekarang kau punya dua pilihan, yaitu untuk pergi ke surga atau menjalani hidup baru di dunia yang baru."'),
+    wr('Tanpa pikir panjang, Issei menjawab, "Aku akan menjadi raja harem di dunia yang baru itu!".'),nl,
 
-    write('%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%'), nl,
-    write('%                              Genshin Asik                                    %'), nl,
-    write('% 1. start  : untuk memulai petualanganmu                                      %'), nl,
-    write('% 2. map    : untuk menampilkan map                                            %'), nl,
-    write('% 3. status : menampilkan kondisimu terkini                                    %'), nl,
-    write('% 4. w      : gerak ke utara 1 langkah                                         %'), nl,
-    write('% 5. s      : gerak ke selatan 1 langkah                                       %'), nl,
-    write('% 6. d      : gerak ke ke timur 1 langkah                                      %'), nl,
-    write('% 7. a      : gerak ke barat 1 langkah                                         %'), nl,
-    write('% 9. Status : menampilkan status pemain                                        %'), nl,
-    write('% 8. help   : menampilkan segala bantuan                                       %'), nl,
-    write('%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%'), nl,
+    help,nl,
 
 	write('This is isekai map : '), nl,
 	map,
@@ -386,7 +400,7 @@ inventOption(1) :-
     bag(B),
     % dupRem(B,C),
     % readBag(B,C),!,
-    write('>>'),
+    write('>> '),
     read(Input),
     (
        \+ member(Input, B)-> write('Item yang anda masukan tidak ada dalam inventory.'); write('Anda membuang '), write(Input),nl,throw(Input, B, Res),retract(bag(_)),asserta(bag(Res))
@@ -397,14 +411,62 @@ inventOption(2) :-
     bag(B),
     % dupRem(B,C),
     % readBag(B,C),!,
-    write('>>'),
+    write('>> '),
     read(Input),
-    % ( \+ member(Input, B) -> write('Item yang anda masukan tidak ada dalam inventory.'); )
-    % detail(Input, Jenis, Stat, StatType, StatNum),
-    % (Jenis = potion -> usepotion;useEquip),
+    ( 
+        \+ member(Input, B) -> write('Item yang anda masukan tidak ada dalam inventory.'); 
+        detail(Input, Jenis, Stat, StatType, StatNum),
+        job(Job),
+        (Jenis = potion -> usePot(Name, Stat, StatType, StatNum) ; useEquip(Input, Jenis, Stat, StatType, StatNum, Job))
+    ),
     write('Item '), write(Input), write(' telah digunakan!'),nl.
 
 inventOption(3):- !,fail.
+
+useEquip(Name, Jenis, Stat, StatType, StatNum, Job) :- 
+    (
+        Jenis = 'Single-Handed Sword', job(Job), Job = swordsman ; Jenis = 'Greatsword', job(Job), Job = swordsman -> retractall(equipedWeap(_,_,_,_)),asserta(equipedWeap(Name, Stat, StatType, StatNum));
+        Jenis = 'Bow', job(Job), Job = archer ; Jenis = 'Crossbow', job(Job), Job = archer -> retractall(equipedWeap(_,_,_,_)),asserta(equipedWeap(Name, Stat, StatType, StatNum));
+        (Jenis = 'Book'; Jenis = 'Staff'), job(Job), (Job =  wizard ; Job = priest) -> retractall(equipedWeap(_,_,_,_)), asserta(equipedWeap(Name, Stat, StatType, StatNum))
+    ),!.
+
+usepotion :-
+    wr('Potion nomor berapa yang akan anda gunakan?'),
+    wr('1. Health Potion Small, Efek: Recover 15% Hp'),
+    wr('2. Health Potion Medium, Efek: Recover 25% Hp'),
+    wr('3. Health Potion Large, Efek: Recover 50% Hp'),
+    wr('4. Rage Potion, Efek: atk +10% selama 3 turn'),
+    wr('5. Smart Potion, Efek: int +10% selama 3 turn'),
+    wr('6. Rock Potion, Efek: def +10% selama 3 turn'),
+    read(Input),
+    (
+    Input = 1 -> usePot('Health Potion Small', 'recover Hp', '%', 15);
+    Input = 2 -> usePot('Health Potion Medium', 'recover Hp', '%', 25);
+    Input = 3 -> usePot('Health Potion Large', 'recover Hp', '%', 50);
+    Input = 4 -> usePot('Rage Potion', 'atk', '%', 10);
+    Input = 5 -> usePot('Smart Potion', 'int', '%', 10);
+    Input = 6 -> usePot('Rock Potion', 'def', '%', 10)
+    ),!.
+
+usePot(Name, Stat, StatType, StatNum) :-
+    bag(Bag),
+    count(Name, Bag, Num),
+    finalSTATS(_,_,_, MaxHP),
+    currentHP(CurrentHP),
+    % currentATK(CurrentATK),
+    % currentDEF(CurrentDEF),
+    % currentINT(CurrentINT),
+    (
+        Num = 0 -> write('Potion tidak ada dalam inventory! Haha panik panik dia panik');
+        throw(Name, Bag, Res),retract(bag(_)),asserta(bag(Res)),
+        (Stat = 'recover Hp' -> retractall(currentHP(_)),HPRegenerated is MaxHP*(1+(StatNum/100)),NewHP is CurrentHP + HPRegenerated,asserta(currentHP(NewHP)), write('HP Anda terpulihkan sebanyak: '),wr(HPRegenerated), write('HP Anda saat ini: '), wr(NewHP);true),
+        (Stat = 'atk' -> retract(equipedPOT(_)), asserta(equipedPOT(atk)) ; true),
+        (Stat = 'def' -> retract(equipedPOT(_)), asserta(equipedPOT(def)) ; true),
+        (Stat = 'int' -> retract(equipedPOT(_)), asserta(equipedPOT(int)) ; true)
+    ),!.
+
+
+
 
 %% STORE
 %% ==============================================================
@@ -419,7 +481,7 @@ store :-
     write('2. Potion'),nl,
     write('3. Keluar'),nl,
     write('Masukkan nomor yang dipilih'),nl,
-    write('>>'),
+    write('>> '),
     read(Input),
     storeOpt(Input).
 
@@ -527,14 +589,16 @@ buyPot(6) :-
     asserta(gold(SisaUang)).
  
 
+absolute(X,Y):-
+    Y is round(sqrt(X**2)).
 
-% randomMonsterLevel(MyLevel, EnemyLevel) :-
-%     Low is MyLevel - 3,
-%     High is MyLevel + 3,
-%     random(Low,High,Lev), % RANDOMIZE LEVEL MONSTER +- 3 dari level kita
-%     absolute(Lev, EnemyLevel).
-
-
+randomEnemyLevel(MyLevel) :-
+    Low is MyLevel - 3,
+    High is MyLevel + 3,
+    random(Low,High,Lev), % RANDOMIZE LEVEL MONSTER +- 3 dari level kita
+    absolute(Lev, EnemyLevel),
+    retractall(enemyLevel(_)),
+    asserta(enemyLevel(EnemyLevel)).
 
 
 %% EXPLORING
@@ -585,6 +649,8 @@ setEnemy(X) :-
 setEnemy(X) :-
 	X = 1,
 	write('You found a Slime!!!!'),
+    level(CurrentLVL),
+    randomEnemyLevel(CurrentLVL),
 	retract(enemy(_)),
 	asserta(enemy(slime)),
 	!.
@@ -592,6 +658,8 @@ setEnemy(X) :-
 setEnemy(X) :-
 	X = 2,
 	write('You found a Goblin!!!!'),
+    level(CurrentLVL),
+    randomEnemyLevel(CurrentLVL),
 	retract(enemy(_)),
 	asserta(enemy(goblin)),
 	!.
@@ -599,6 +667,8 @@ setEnemy(X) :-
 setEnemy(X) :-
 	X = 3,
 	write('Is it the final battle??!!!'),
+    retractall(enemyLevel(_)),
+    asserta(enemyLevel(50)),
 	retract(enemy(_)),
 	asserta(enemy(dragon)),
 	!.
@@ -813,6 +883,138 @@ baseSTAT(9999, 9999, 9999, 999999) :-
     job(god).
 
 
+% FINAL STATS CACLCULATION
+finalSTATS(ATK, DEF, INT, MAXHP) :-
+    finalATK(ATK1), finalDEF(DEF1), finalINT(INT1), finalHP(HP1),
+    ATK is ATK1, DEF is DEF1, INT is INT1, MAXHP is HP1.
+
+% FINAL ATK CALCULATION
+finalATK(ATK) :-
+    finalATK2(ATK1),
+    equipedPOT(atk),
+    ATK is ATK1*(1.1),!.
+finalATK(ATK) :-
+    finalATK2(ATK),!.
+
+finalATK2(ATK) :-
+    finalATK3(ATK1),
+    equipedAcc(_,'atk', '+', ATK2),
+    ATK is ATK1 + ATK2,!.
+finalATK2(ATK) :-
+    finalATK3(ATK1),
+    equipedAcc(_,'atk', '%', ATKPercent),
+    baseSTAT(BASEATK,_,_,_),
+    ATK2 is BASEATK*(1+(ATKPercent/100)),
+    ATK is ATK1 + ATK2,!.
+finalATK2(ATK) :-
+    finalATK3(ATK2),
+    ATK is ATK2,!.
+
+finalATK3(ATK):-
+    baseSTAT(ATK1,_,_,_),
+    equipedWeap(_, 'atk', '+', StatNum),
+    ATK is ATK1 + StatNum,!.
+finalATK3(ATK):-
+    baseSTAT(ATK1,_,_,_),
+    equipedWeap(_, 'atk', '%', StatNum),
+    ATK is ATK1*(1+(StatNum/100)),!.
+finalATK3(ATK) :-
+    baseSTAT(ATK,_,_,_),!.
+
+
+% FINAL DEF CALCULATION
+finalDEF(DEF) :-
+    finalDEF2(DEF1),
+    equipedPOT(def),
+    DEF is DEF1*(1.1),!.
+finalDEF(DEF) :-
+    finalDEF2(DEF).
+
+finalDEF2(DEF) :-
+    finalDEF3(DEF1),
+    equipedAcc(_, 'def','+', StatNum),
+    DEF is DEF1 + StatNum,!.
+finalDEF2(DEF):-
+    finalDEF3(DEF1),
+    equipedAcc(_, 'def', '%', StatNum),
+    DEF is DEF1*(1+(StatNum/100)),!.
+finalDEF2(DEF) :-
+    finalDEF3(DEF),!.
+
+finalDEF3(DEF):-
+    baseSTAT(_,DEF1,_,_),
+    equipedHead(_, _,'+', StatNum),
+    DEF is DEF1 + StatNum,!.
+finalDEF3(DEF):-
+    baseSTAT(_,DEF1,_,_),
+    equipedHead(_, _, '%', StatNum),
+    DEF is DEF1*(1+(StatNum/100)),!.
+finalDEF3(DEF) :-
+    baseSTAT(_,DEF,_,_),!.
+
+
+% FINAL INT CALCULATION
+finalINT(INT) :-
+    finalINT2(INT1),
+    equipedPOT(int),
+    INT is INT1*(1.1),!.
+finalINT(INT) :-
+    finalATK2(INT),!.
+
+finalINT2(INT) :-
+    finalINT3(INT1),
+    equipedAcc(_,'int', '+', INT2),
+    INT is INT1 + INT2,!.
+finalINT2(INT) :-
+    finalINT3(INT1),
+    equipedAcc(_,'int', '%', INTPercent),
+    baseSTAT(_,_,BaseINT,_),
+    INT2 is BaseINT*(1+(INTPercent/100)),
+    INT is INT1 + INT2,!.
+finalINT2(INT) :-
+    finalINT3(INT2),
+    INT is INT2,!.
+
+finalINT3(INT):-
+    baseSTAT(_,_,INT1,_),
+    equipedWeap(_, 'int', '+', StatNum),
+    INT is INT1 + StatNum,!.
+finalINT3(INT):-
+    baseSTAT(_,_,INT1,_),
+    equipedWeap(_, 'int', '%', StatNum),
+    INT is INT1*(1+(StatNum/100)),!.
+finalINT3(INT) :-
+    baseSTAT(_,_,INT,_),!.
+    
+% FINAL HP CALCULATION
+finalHP(HP) :-
+    finalHP2(HP1),
+    equipedBoots(_,'hp', '+', HP2),
+    HP is HP1 + HP2,!.
+finalHP(HP) :-
+    finalHP2(HP1),
+    equipedBoots(_,'hp', '%', HPPercent),
+    baseSTAT(_,_,BaseINT,_),
+    HP2 is BaseINT*(1+(HPPercent/100)),
+    HP is HP1 + HP2,!.
+finalHP(HP) :-
+    finalHP2(HP).
+
+finalHP2(HP):-
+    baseSTAT(_,_,_,HP1),
+    equipedArmor(_, 'hp', '+', StatNum),
+    HP is HP1 + StatNum,!.
+finalHP2(HP):-
+    baseSTAT(_,_,_,HP1),
+    equipedArmor(_, 'hp', '%', StatNum),
+    HP is HP1*(1+(StatNum/100)),!.
+finalHP2(HP) :-
+    baseSTAT(_,_,_,HP),!.
+
+
+
+
+
 % CHARACTER LEVEL AND STATUS
 %% ==============================================================
 xpNextLVL(X) :-
@@ -821,22 +1023,42 @@ xpNextLVL(X) :-
 
 level(X) :-
     ekspi(Y),
-    X is floor((-900 + sqrt(900**2 + 400*Y))/200) + 1. 
+    X is floor((-900 + sqrt(900**2 + 400*Y))/200) + 1.
 
 status:-
     job(Job),
     level(Level),
     ekspi(XP),
     xpNextLVL(XP2),
-    write('Status anda:'), nl,
-    write('Job anda: '), write(Job), nl,
-    write('Level: '), write(Level), nl,
-    write('Exp: '), write(XP),write('/'),write(XP2), nl.
-
-
+    finalSTATS(ATK, DEF, INT, MAXHP),
+    currentHP(CurrentHP),
+    write('Status anda'), nl,
+    write('Job      : '), write(Job), nl,
+    write('Level    : '), write(Level), nl,
+    write('Exp      : '), write(XP),write('/'),write(XP2), nl,
+    write('HP       : '), write(CurrentHP),write('/'),write(MAXHP), nl,
+    write('ATK      : '), write(ATK), nl,
+    write('DEF      : '), write(DEF), nl,
+    write('INT      : '), write(INT), nl.
 
 wr(Line) :-
     write(Line),nl.
+
+help :-
+    write('%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%'), nl,
+    write('%                              Genshin Asik                                    %'), nl,
+    write('% 1. start  : untuk memulai petualanganmu                                      %'), nl,
+    write('% 2. map    : untuk menampilkan map                                            %'), nl,
+    write('% 3. ascend : ascencion untu mengganti job anda (Minimal LVL 3)                %'), nl,
+    write('% 4. status : menampilkan kondisimu terkini                                    %'), nl,
+    write('% 5. w      : gerak ke utara 1 langkah                                         %'), nl,
+    write('% 6. s      : gerak ke selatan 1 langkah                                       %'), nl,
+    write('% 7. d      : gerak ke ke timur 1 langkah                                      %'), nl,
+    write('% 8. a      : gerak ke barat 1 langkah                                         %'), nl,
+    write('% 9. help   : menampilkan segala bantuan                                       %'), nl,
+    write('%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%'), nl.
+
+
 
 gambar(goblin) :-
     % goblin                                              
