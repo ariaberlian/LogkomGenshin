@@ -158,7 +158,7 @@ grade('SS', 'Mistilteinn', 2).
 grade('SS', 'Dream of Last Memoire', 3).
 grade('SS', 'Dragon Slayer', 4).
 grade('SS', 'Codex of Forgotten God', 5).
-grade('SS', 'Reforged ', 6).
+grade('SS', 'Reforged', 6).
 grade('SS', 'Divine Protection', 7).
 grade('SS', 'Honda SNI Helmet', 8).
 grade('SS', 'Holly Swallow', 9).
@@ -166,7 +166,7 @@ grade('SS', 'Fiesta SpicyChikenWings', 10).
 
 % Bag and Wallet
 bag(['Baseball Bat', 'Uniqlo Tshirt', 'Baseball Helmet', 'Sendal Swallow', 'Ali Ring','Health Potion Small','Health Potion Small','Health Potion Small','Health Potion Small','Health Potion Small']).
-% gold(300).
+gold(300).
 
 % Equiped Equipment
 % equipedWeap(Name, Stat, StatType, StatNum)
@@ -194,7 +194,7 @@ start :-
 
     asserta(job(programmer)),
     asserta(ekspi(0)),
-    asserta(gold(300)),
+    asserta(gold(99999999999999)),
     finalSTATS(_,_,_,HP),
     asserta(currentHP(HP)),
 	asserta(pos(player, 1, 1)),
@@ -352,6 +352,25 @@ map :-
 
 %% INVENTORY
 %% ==============================================================
+concat([],L2,L2).
+concat([H|T], L2, [H|L3]):-concat(T,L2,L3).
+
+push(Element,Queue,Result):- concat(Queue,[Element],Result).
+
+firstOut([_|T],T).
+pop(Queue,Result):-firstOut(Queue,Result).
+
+front([H|_],H).
+back([H],H).
+back([_|T],Result):-back(T,Result).
+
+list_length([]     , 0 ).
+list_length([_|T] , N ) :- list_length(T,N1) , N is N1+1.
+
+lastOut([H|T], Result):-lastOutprev(T, Result, H).            
+lastOutprev([], [], _).
+lastOutprev([H1|T1], [H0|T0], H0):-lastOutprev(T1, T0, H1). 
+
 count(_, [], 0).
 count(X, [H|T], Result) :- X \= H, count(X, T, Result).
 count(X, [H|T], Result) :- X = H, count(X, T, Res1), Result is Res1 + 1.
@@ -403,7 +422,8 @@ inventOption(1) :-
     write('>> '),
     read(Input),
     (
-       \+ member(Input, B)-> write('Item yang anda masukan tidak ada dalam inventory.'); write('Anda membuang '), write(Input),nl,throw(Input, B, Res),retract(bag(_)),asserta(bag(Res))
+       \+ member(Input, B)-> !,write('Item yang anda masukan tidak ada dalam inventory.'), inventOption(1); 
+       write('Anda membuang '), write(Input),nl,throw(Input, B, Res),retract(bag(_)),asserta(bag(Res))
     ).
 
 inventOption(2) :-
@@ -414,9 +434,8 @@ inventOption(2) :-
     write('>> '),
     read(Input),
     ( 
-        \+ member(Input, B) -> write('Item yang anda masukan tidak ada dalam inventory.'); 
-        detail(Input, Jenis, Stat, StatType, StatNum),
-        job(Job),
+        \+ member(Input, B) ->!, write('Item yang anda masukan tidak ada dalam inventory.'),inventOption(2);
+         detail(Input, Jenis, Stat, StatType, StatNum),job(Job),
         (Jenis = potion -> usePot(Name, Stat, StatType, StatNum) ; useEquip(Input, Jenis, Stat, StatType, StatNum, Job))
     ),
     write('Item '), write(Input), write(' telah digunakan!'),nl.
@@ -453,13 +472,10 @@ usePot(Name, Stat, StatType, StatNum) :-
     count(Name, Bag, Num),
     finalSTATS(_,_,_, MaxHP),
     currentHP(CurrentHP),
-    % currentATK(CurrentATK),
-    % currentDEF(CurrentDEF),
-    % currentINT(CurrentINT),
     (
         Num = 0 -> write('Potion tidak ada dalam inventory! Haha panik panik dia panik');
         throw(Name, Bag, Res),retract(bag(_)),asserta(bag(Res)),
-        (Stat = 'recover Hp' -> retractall(currentHP(_)),HPRegenerated is MaxHP*(1+(StatNum/100)),NewHP is CurrentHP + HPRegenerated,asserta(currentHP(NewHP)), write('HP Anda terpulihkan sebanyak: '),wr(HPRegenerated), write('HP Anda saat ini: '), wr(NewHP);true),
+        (Stat = 'recover Hp' -> retractall(currentHP(_)),HPRegenerated is round(MaxHP*(StatNum/100)+ 0.01),NewHP is round(CurrentHP + HPRegenerated + 0.01), asserta(currentHP(NewHP)), write('HP Anda terpulihkan sebanyak: '),wr(HPRegenerated), write('HP Anda saat ini: '), wr(NewHP);true),
         (Stat = 'atk' -> retract(equipedPOT(_)), asserta(equipedPOT(atk)) ; true),
         (Stat = 'def' -> retract(equipedPOT(_)), asserta(equipedPOT(def)) ; true),
         (Stat = 'int' -> retract(equipedPOT(_)), asserta(equipedPOT(int)) ; true)
@@ -473,7 +489,7 @@ usePot(Name, Stat, StatType, StatNum) :-
 jajan(M, P, Result) :-
     M >= P, Result is M-P.
 jajan(M, P, _Result) :-
-    M < P, write('Gold anda tidak mencukupi!'),nl.
+    M < P, write('Gold anda tidak mencukupi!'),nl,!.
 
 store :-
     write('Selamat datang di store. Ingin belanja apa?'),nl,
@@ -483,20 +499,23 @@ store :-
     write('Masukkan nomor yang dipilih'),nl,
     write('>> '),
     read(Input),
-    storeOpt(Input).
+    storeOpt(Input),!.
 
 storeOpt(1) :-
     write('Anda telah membeli Pandora Box.'),nl,
     gold(M),
     jajan(M, 300, SisaUang),
-    retract(gold(_)),
+    random(1, 101, N),
+    random(1, 11, N1),
+    gacha(Eq, Grade, N, N1),
+    retractall(gold(_)),
     asserta(gold(SisaUang)),
     write('Membuka Pandora Box....'),nl,
-    write('Anda mendapatkan: '),gacha(Eq, Grade),write(Eq),write(' dengan tingkat kelangkaan '),write(Grade),
+    write('Anda mendapatkan: '),write(Eq),write(' dengan tingkat kelangkaan '),write(Grade),
     bag(Y),
     push(Eq, Y, B),
     retract(bag(_)),
-    asserta(bag(B)).
+    asserta(bag(B)),!.
 
 storeOpt(2) :-
     write('1. Health Potion Small  50G'),nl,
@@ -506,15 +525,19 @@ storeOpt(2) :-
     write('5. Smart Potion 200G'),nl,
     write('6. Rock Potion 200G'),nl,
     read(Input),
-    buyPot(Input).
+    buyPot(Input),!.
 
-gacha(Eq,Grade) :-
-    random(1, 101, N),
-    random(1, 11, N1),
-    (1 =< N,N < 66 -> grade('B', Eq, N1), Grade is 'B';true),
-    (66 =< N,N < 87 -> grade('A', Eq, N1), Grade is 'A';true),
-    (87 =< N,N < 96 -> grade('S', Eq, N1), Grade is 'S';true),
-    (96 =< N,N < 100 -> grade('SS', Eq, N1), Grade is 'SS';true).
+gacha(Eq,'B', N, N1) :-
+    N >= 1, N < 66 -> grade('B', Eq, N1),!.
+
+gacha(Eq,'A', N, N1) :-
+    N >= 66, N < 87 -> grade('A', Eq, N1),!.
+
+gacha(Eq,'S', N, N1) :-
+    N >= 87, N < 96 -> grade('S', Eq, N1),!.
+
+gacha(Eq,'SS', N, N1) :-
+    N >= 96, N =< 100 -> grade('SS', Eq, N1),!.
 
 buyPot(1) :- 
     write('Anda telah membeli Health Potion Small.'),nl,
@@ -526,7 +549,7 @@ buyPot(1) :-
     gold(M),
     jajan(M, 50, SisaUang),
     retract(gold(_)),
-    asserta(gold(SisaUang)).
+    asserta(gold(SisaUang)),!.
 
 buyPot(2) :- 
     write('Anda telah membeli Health Potion Medium.'),nl,
@@ -538,7 +561,7 @@ buyPot(2) :-
     gold(M),
     jajan(M, 100, SisaUang),
     retract(gold(_)),
-    asserta(gold(SisaUang)).
+    asserta(gold(SisaUang)),!.
 
 buyPot(3) :- 
     write('Anda telah membeli Health Potion Large.'),nl,
@@ -550,7 +573,7 @@ buyPot(3) :-
     gold(M),
     jajan(M, 200, SisaUang),
     retract(gold(_)),
-    asserta(gold(SisaUang)).
+    asserta(gold(SisaUang)),!.
 
 buyPot(4) :- 
     write('Anda telah membeli Rage Potion.'),nl,
@@ -562,7 +585,7 @@ buyPot(4) :-
     gold(M),
     jajan(M, 200, SisaUang),
     retract(gold(_)),
-    asserta(gold(SisaUang)).
+    asserta(gold(SisaUang)),!.
 
 buyPot(5) :- 
     write('Anda telah membeli Smart Potion.'),nl,
@@ -574,7 +597,7 @@ buyPot(5) :-
     gold(M),
     jajan(M, 200, SisaUang),
     retract(gold(_)),
-    asserta(gold(SisaUang)).
+    asserta(gold(SisaUang)),!.
 
 buyPot(6) :- 
     write('Anda telah membeli Rock Potion.'),nl,
@@ -586,7 +609,7 @@ buyPot(6) :-
     gold(M),
     jajan(M, 200, SisaUang),
     retract(gold(_)),
-    asserta(gold(SisaUang)).
+    asserta(gold(SisaUang)),!.
  
 
 absolute(X,Y):-
@@ -640,7 +663,10 @@ writeArah(M) :-
 %% WOLF
 setEnemy(X) :-
 	X = 0,
-	write('You found a Wolf!!!!'),
+	level(CurrentLVL),
+    randomEnemyLevel(CurrentLVL),
+    enemyLevel(EnemyLevel),
+	write('You found a level '), write(EnemyLevel), write(' Wolf!!!!'), nl,
 	retract(enemy(_)),
 	asserta(enemy(wolf)),
 	
@@ -648,25 +674,30 @@ setEnemy(X) :-
 %% SLIME
 setEnemy(X) :-
 	X = 1,
-	write('You found a Slime!!!!'),
     level(CurrentLVL),
     randomEnemyLevel(CurrentLVL),
+    enemyLevel(EnemyLevel),
+	write('You found a level '), write(EnemyLevel), write(' Slime!!!!'), nl,
+    gambar(slime),
 	retract(enemy(_)),
 	asserta(enemy(slime)),
 	!.
 %% GOBLIN
 setEnemy(X) :-
 	X = 2,
-	write('You found a Goblin!!!!'),
-    level(CurrentLVL),
+	level(CurrentLVL),
     randomEnemyLevel(CurrentLVL),
+    enemyLevel(EnemyLevel),
+	write('You found a level '), write(EnemyLevel), write(' Goblin!!!!'), nl,
+    gambar(goblin), nl,
 	retract(enemy(_)),
 	asserta(enemy(goblin)),
 	!.
 %% DRAGON
 setEnemy(X) :-
 	X = 3,
-	write('Is it the final battle??!!!'),
+	write('Is it the final battle??!!!'), nl,
+    gambar(naga), nl,
     retractall(enemyLevel(_)),
     asserta(enemyLevel(50)),
 	retract(enemy(_)),
@@ -677,7 +708,7 @@ setEnemy(X) :-
 foundEnemy(X, _) :-
 	X < 2,
 	setNotInBattle(0),
-	random(0, 2, Z),
+	random(0, 3, Z),
 	setEnemy(Z),
 	!.
 %% TIDAK MENEMUKAN ENEMY
@@ -720,7 +751,8 @@ move(X1, Y1) :-
 run :-
 	\+enemy(dragon),
 	setNotInBattle(1),
-	write('Are you afraid ?!!'),
+	write('Are you afraid ?!!'), nl,
+    gambar(running),
 	!.
 
 %% PORTAL 1
@@ -824,20 +856,20 @@ monsterEXPGOLD(XP, GOLD) :-
 
 monsterSTAT(ATK, HP) :-
     enemyLevel(LVL),
-    ATK is round(300*1.1**(LVL)),
-    HP is round(400*1.1**(LVL)),
+    ATK is round(300*1.1**(LVL) + 0.00000001),
+    HP is round(400*1.1**(LVL) + 0.00000001),
     enemy(goblin),!.
     
 monsterSTAT(ATK, HP) :-
     enemyLevel(LVL),
-    ATK is round(200*1.1**(LVL)),
-    HP is round(200*1.1**(LVL)),
+    ATK is round(200*1.1**(LVL) + 0.00000001),
+    HP is round(200*1.1**(LVL) + 0.00000001),
     enemy(slime),!.
 
 monsterSTAT(ATK, HP) :-
     enemyLevel(LVL),
-    ATK is round(400*1.1**(LVL)),
-    HP is round(400*1.1**(LVL)),
+    ATK is round(400*1.1**(LVL) + 0.00000001),
+    HP is round(400*1.1**(LVL) + 0.00000001),
     enemy(wolf),!.
 
 
@@ -959,7 +991,7 @@ finalINT(INT) :-
     equipedPOT(int),
     INT is INT1*(1.1),!.
 finalINT(INT) :-
-    finalATK2(INT),!.
+    finalINT2(INT),!.
 
 finalINT2(INT) :-
     finalINT3(INT1),
@@ -998,7 +1030,8 @@ finalHP(HP) :-
     HP2 is BaseINT*(1+(HPPercent/100)),
     HP is HP1 + HP2,!.
 finalHP(HP) :-
-    finalHP2(HP).
+    finalHP2(HP2),
+    HP is HP2.
 
 finalHP2(HP):-
     baseSTAT(_,_,_,HP1),
@@ -1032,14 +1065,15 @@ status:-
     xpNextLVL(XP2),
     finalSTATS(ATK, DEF, INT, MAXHP),
     currentHP(CurrentHP),
+    ATK1 is round(ATK + 0.00000001), DEF1 is round(DEF + 0.00000001), INT1 is round(INT + 0.00000001), MAXHP1 is round(MAXHP + 0.00000001), CurrentHP1 is round(CurrentHP + 0.00000001),
     write('Status anda'), nl,
     write('Job      : '), write(Job), nl,
     write('Level    : '), write(Level), nl,
     write('Exp      : '), write(XP),write('/'),write(XP2), nl,
-    write('HP       : '), write(CurrentHP),write('/'),write(MAXHP), nl,
-    write('ATK      : '), write(ATK), nl,
-    write('DEF      : '), write(DEF), nl,
-    write('INT      : '), write(INT), nl.
+    write('HP       : '), write(CurrentHP1),write('/'),write(MAXHP1), nl,
+    write('ATK      : '), write(ATK1), nl,
+    write('DEF      : '), write(DEF1), nl,
+    write('INT      : '), write(INT1), nl.
 
 wr(Line) :-
     write(Line),nl.
@@ -1057,8 +1091,6 @@ help :-
     write('% 8. a      : gerak ke barat 1 langkah                                         %'), nl,
     write('% 9. help   : menampilkan segala bantuan                                       %'), nl,
     write('%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%'), nl.
-
-
 
 gambar(goblin) :-
     % goblin                                              
@@ -1178,7 +1210,8 @@ gambar(running) :-
     wr('yNy-                           oMMN`    '),
     wr('h+                            +MMMMh    '),
     wr('                              .odMMMy.  '),
-    wr('                                 -shmmy ').
+    wr('                                 -shmmy '),
+    wr('Joestar Family Secret Move: Nigerundayoo!!').
 
 
 
