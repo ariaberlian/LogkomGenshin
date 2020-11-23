@@ -192,10 +192,12 @@ start :-
     write(' S     S  S       S    S      P S    S S S    S           P S       S     b S    O S'), nl,
     write('  "sss"   P sSSss P    P ` ss\'  P    P P P    P      ` ss\'  P sSSss P     P P    P P'), nl, nl,
 
+    write('Pada suatu hari yang cerah di negara Belzard, hiduplah seorang pemuda biasa yang sedang asik bermain baseball bersama temannya. *Ctankk* “HOMERUNNNN!!!”. Seorang anak teriak. Lalu pemuda bernama Issei berlari mengejar bola itu meskipun sudah keluar dari arena bermain. Dia terus berlari hingga berpapasan dengan truck-kun. Issei membuka mata. Dia melihat sesosok wanita cantik di depannya. Wanita itu berkata, “Sayang sekali, namun kau sudah mati. Sekarang kau punya dua pilihan, yaitu untuk pergi ke surga atau menjalani hidup baru di dunia yang baru.”. Tanpa pikir panjang, Issei menjawab, “Aku akan menjadi raja harem di dunia yang baru itu!”.'),nl,nl,
+
     write('%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%'), nl,
     write('%                              Genshin Asik                                    %'), nl,
     write('% 1. start  : untuk memulai petualanganmu                                      %'), nl,
-    write('% 2. map : untuk menampilkan map                                               %'), nl,
+    write('% 2. map    : untuk menampilkan map                                            %'), nl,
     write('% 3. status : menampilkan kondisimu terkini                                    %'), nl,
     write('% 4. w      : gerak ke utara 1 langkah                                         %'), nl,
     write('% 5. s      : gerak ke selatan 1 langkah                                       %'), nl,
@@ -205,7 +207,7 @@ start :-
     write('% 8. help   : menampilkan segala bantuan                                       %'), nl,
     write('%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%'), nl,
 
-	write('This is your map : '), nl,
+	write('This is isekai map : '), nl,
 	map,
 	!.
 
@@ -759,6 +761,7 @@ monsterSTAT(ATK, HP) :-
 monsterSTAT(ATK, HP) :-
     enemyLevel(LVL),
     ATK is round(200*1.1**(LVL)),
+    HP is round(200*1.1**(LVL)),
     enemy(slime),!.
 
 monsterSTAT(ATK, HP) :-
@@ -829,3 +832,96 @@ status:-
     write('Job anda: '), write(Job), nl,
     write('Level: '), write(Level), nl,
     write('Exp: '), write(XP),write('/'),write(XP2), nl.
+
+
+
+wr(Line) :-
+    write(Line),nl.
+
+gambar(1) :-
+    % goblin                                              
+    wr('                    .....`      ``                '),
+    wr('                `-+so++//-`  `//`                 '),
+    wr('                `/+oyyoo+//:.:++.                 '),
+    wr('             -:./ssoooshdy+o/+o+`           /os+/`'),
+    wr('              -shhydh++ss+///+++           /dhssy:'),
+    wr('               .ossyys+o+o/hh+/:            /mdds '),
+    wr('                `yhhhhsoohy+oso/:.`     ``.+yhdh: '),
+    wr(' `....`          -+hdyss+::+o++/::::-   .-//yoo:  '),
+    wr(' .:yyo:/o:-  `.-+shddhyyo++oso+/:::/++.  .:oo+`   '),
+    wr('  -ysyyydsy+oyyhyyyhysyhdhsso+::::/oyyh/ -o+/:    '),
+    wr('   `-`+hyohydddddhys+:-/yssoo+////+omdddys+so:    '),
+    wr('       -//:`.---..:hdo/+hyyso++++++ -shddmh+.     '),
+    wr('                   sdhys+/:::--://+.   `oh:       '),
+    wr('                   yddys:-:/:::///+/  :syo        '),
+    wr('                   +dddhhysoo++++oo/   `.         '),
+    wr('                   /dmmmmmmddhhhhhh:              '),
+    wr('                  -syhdmmmmddddhhhd-              '),
+    wr('                 `ssyhhdmmmmddddhhd+              '),
+    wr('                 +hhyyhh/---/smmdhhs-             '),
+    wr('                 .mmhyo.     `ommdy/`             '),
+    wr('                 ohhs        :hmd/`               '),
+    wr('               `sddhh        .mmddds:--:.         '),
+    wr('               shhdy.         /ooosyyhyo          ').
+
+
+gambar(2) :-
+    wr('                        ``              '),
+    wr('             ````..---.`                '),
+    wr('     `     ``.``...-:///:`              '),
+    wr('    `.-.` `..--:--:::///++-   `.--      '),
+    wr('    `..::`.-:s+s:::/so+/++s: `:///.     '),
+    wr('     `.:/-.-os++///+++o+++os--+o+.      '),
+    wr('      `-//--:/+o++/ysoso+soys+ss:       '),
+    wr('      `.:/:-+sshys/ddddhsysysyo+`       '),
+    wr('       `.---:+sys//+ossooosssssy.       '),
+    wr('        `.-:/+++++oooooosssssyyyy+-`    '),
+    wr('      `.-://+oooooooooooossssyyyyhh.    '),
+    wr('  ```.-:://+++oossssssyyyyyhhhhhhhhd+.  '),
+    wr('    ````..:::::///+/-:://oo+oyhyyyys/`  ').
+
+
+gambar(0):-                                                                                                    
+    wr('                                      `...-/++:--.`                                                 '),
+    wr('                             `-/osyhhddddddddddddddhyo/-.`                                          '),
+    wr('                         -+sdmmmmmmddddddmmmmmmmmmmddmddhhyooo`                                     '),
+    wr('                    `:ohmmmmmmmmmmmmmmmmmmmmmmmNNNNmmdddyshdddhs+/:/:                               '),
+    wr('                 -ohNNNNNmmmmmmmmmmmmmmmmNNNNNNNNNNNmdhyhhhhhhyyyyhdy:                              '),
+    wr('              .odNNNNNmmmdmmmmmmmmmmmmmmmmmmmmNNNMNhhddddddhhhhddhhdmy-                             '),
+    wr('            :hNNNmmmmmmNNNNNNNNNNNNNNNNNNNNNNNNNMmdmmmmdddhhhhhhhhdddds.                            '),
+    wr('         .smNmyo/--.-+mNNmmNNNNNNNNNNNNNNNNmmmmNdmNmNNmmNmdhddddhyyhhdh+/:-                         '),
+    wr('       -ydo/.        `mNNmNNNNNNNNNNNNmmmmmNNNNhNNmmmmNNmmmmmmdhddhyyhdh+yhy/`                      '),
+    wr('     -+/`           :mNNNNNmmmmNNNNNNNNNNNNNNmdmmmmmmmmNNNNmmmmmmhdyosyhs/ssyhs:                    '),
+    wr('   `-.            .yNNNNmmmNNNNNNNNNNNNmmmmNNmmmmmddmmNNNmdmmmNmmmmyo++ss//+oosys/`                 '),
+    wr('   `            `sNNmy+-```./mmmmmmmmmmmmNNNmmmddmmmmmdddmdhhyoo/oho- `:oo::`-/oooo:                '),
+    wr('              `omho-        -mdmmdmmmmNNNmmdddmNNmmmmmmmmmy:mhsoyd/.`   `:o-`  `-+o++.              '),
+    wr('            `+y/`          -dmdmdmmNNNNNmmmNNNNmmdddddmNNmdhmdyyyho       `-.`    `-://.            '),
+    wr('           :+.            +mmmmmmNmNNmmmNNNNNmmmdhy++mMMNNmmmmdssh+         //       `.//.          '),
+    wr('         ::             .yNmmmmNNNNmdmmNNNNmmddhs/..mNNNNmhmdddyyyo`        .+          `::`        '),
+    wr('       .-              /mNNNNNNNNddmmdNNNmmddhs:   sNMNNNNhddhdyys/          :            `.:       '),
+    wr('      .`             `yNNNNNNNmddNNmdmNNNmddhs`   :mNNNNNmNmdhys+/           .              `-      '),
+    wr('     `              :mNNNNNNNddNMMNmddNNNmmdds-   oNNNmmNNmmdm+o/                             `     '),
+    wr('                  -yNMNNNNmdddmmNNNNNmddmdddhyo+-.hNNmmdmdyhdh:+-                                   '),
+    wr('                .yNNNmmmmmNNNmmmmmddddhhyysooo++++hmmmdhdhs/o/-`                                    '),
+    wr('              `sNNNmhysohMNNNNNNNNNNmdddddddhhyyso/shhhhyds/::                                      '),
+    wr('             +mNho:      +MNNNNNNNNNNNNNNmmmmmmmmdhhyoosyhs/++`                                     '),
+    wr('           :dh+.         .MMNNmmNNNNmNmmNmmNNNNNmmmdhymdhhy+so-                                     '),
+    wr('         -o+`            -NMNNdNNNmNNNNmmmmNmmNNmNmdyody++do/o:                                     '),
+    wr('       `-.               /NNNmmNNNmmmmmmmmmmNNNNNmdy+yyo/.y/.o-                                     '),
+    wr('       `               -hNNNNNNNNNmNmdhddhdmNNNNmmyoyds+/so/+:                                      '),
+    wr('                     .yNMNNNNNmmmmmmNmdhyyhmNNNNmh+smmhyhsyo-                                       '),
+    wr('                   `sNNNNNNNmdyohmNNNNNNmmNNNmNNmyodhs+yhho`                                        '),
+    wr('                  /NMNNNNNmmdyosdmmdddmmmmmmmmNNmds+oymNms:                                         '),
+    wr('                 sMMNmmmNNmdso:+oo+``/sddddddhydNNdsohNNd+-                                         '),
+    wr('               `hMNNmhyNmds+/`        sNNNdyo/` -sNmhosdh+/-`                                       '),
+    wr('               hMNNmyhmhyo/.         oMNdho:.``.--/hNdyoo/oyso/:`                                   '),
+    wr('              +MNNmhoNdss.         .dNmhso++oo/:--...ddo//hmhso//:.                                 '),
+    wr('              yMNNmssNhss`    ``.:/sdNdho/:-`       .Nms//-...``                                    '),
+    wr('              oMMNmyhNhooo+::/+oyhyohmmys/`         `Nmyoo`                                         '),
+    wr('               sMNNmmmmo+hsyysso/.`/s+mmsyoo+++:   /Ndho+hso/o/::/`                                 '),
+    wr('                ./ommNNys+:.`      .` .dNdys+ooo   /mdysyhdhhy//oo+/`                               '),
+    wr('                  :NNNNhsss-           `::-:+.      `:-`-:::/+: `:/.`                               '),
+    wr('                  :so-Ny:.:`                                                                        '),
+    wr('                      :/                                                                            ').
+                                                                                                        
+                                                                                                    
