@@ -320,6 +320,10 @@ segment(X, Y) :-
 	write('D'),
 	!.
 segment(X, Y) :-
+	pos(wolfArea, X, Y),
+	write('w'),
+	!.
+segment(X, Y) :-
 	pos(obstacle, X, Y),
 	write('#'),
 	!.
@@ -697,16 +701,16 @@ setEnemy(X) :-
 %% MENEMUKAN ENEMY di WOLF AREA
 foundEnemy(X, _) :-
 	X < 2,
-	setNotInBattle(0),
 	inWolfArea,
+	setNotInBattle(0),
 	setEnemy(0),
 	!.
 	
 %% MENEMUKAN ENEMY
 foundEnemy(X, _) :-
 	X < 2,
-	setNotInBattle(0),
 	random(0, 2, Z),
+	setNotInBattle(0),
 	setEnemy(Z),
 	!.
 %% TIDAK MENEMUKAN ENEMY
