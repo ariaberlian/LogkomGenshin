@@ -321,7 +321,7 @@ segment(X, Y) :-
 	!.
 segment(X, Y) :-
 	pos(wolfArea, X, Y),
-	write('w'),
+	write('W'),
 	!.
 segment(X, Y) :-
 	pos(obstacle, X, Y),
@@ -709,7 +709,7 @@ foundEnemy(X, _) :-
 %% MENEMUKAN ENEMY
 foundEnemy(X, _) :-
 	X < 2,
-	random(0, 2, Z),
+	random(0, 3, Z),
 	setNotInBattle(0),
 	setEnemy(Z),
 	!.
