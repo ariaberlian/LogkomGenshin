@@ -838,7 +838,7 @@ status:-
 wr(Line) :-
     write(Line),nl.
 
-gambar(1) :-
+gambar(goblin) :-
     % goblin                                              
     wr('                    .....`      ``                '),
     wr('                `-+so++//-`  `//`                 '),
@@ -865,7 +865,7 @@ gambar(1) :-
     wr('               shhdy.         /ooosyyhyo          ').
 
 
-gambar(2) :-
+gambar(slime) :-
     wr('                        ``              '),
     wr('             ````..---.`                '),
     wr('     `     ``.``...-:///:`              '),
@@ -881,7 +881,8 @@ gambar(2) :-
     wr('    ````..:::::///+/-:://oo+oyhyyyys/`  ').
 
 
-gambar(0):-                                                                                                    
+
+gambar(naga):-                                                                                                    
     wr('                                      `...-/++:--.`                                                 '),
     wr('                             `-/osyhhddddddddddddddhyo/-.`                                          '),
     wr('                         -+sdmmmmmmddddddmmmmmmmmmmddmddhhyooo`                                     '),
@@ -924,4 +925,38 @@ gambar(0):-
     wr('                  :so-Ny:.:`                                                                        '),
     wr('                      :/                                                                            ').
                                                                                                         
-                                                                                                    
+
+gambar(running) :-
+    wr('                         :ymdy-         '),
+    wr('                        oMMMMMN-        '),
+    wr('                        mMMMMMMd        '),
+    wr('                        -mMMMMMN.       '),
+    wr('                         +MMMMMs        '),
+    wr('                    `-/+hNMMMMNs` ` ..  '),
+    wr('             ./oydmmmNNMMMMMMMMMh`o+NNh.'),
+    wr('            +NNMMMMMNMMMMMMMMMMMMs.hMMd`'),
+    wr('            oMMm----.NMMMMMMMMMMMMdoMN- '),
+    wr('            /MMo     dMMMMMMMMMNmMMMM+  '),
+    wr('            .NM+     sMMMMMMMMMh.hNN+   '),
+    wr('             hMs     -MMMMMMMMMo `..    '),
+    wr('             :MNo+-` `NMMMMMMMm`        '),
+    wr('             `yNMN-` :MMMMMMMM/         '),
+    wr('               //.  `dMMMMMMMd`         '),
+    wr('                    sMMMMMMMMy:-`       '),
+    wr('                    yMMMMMMMMMMNds:.    '),
+    wr('                   `dMMMMMMMMMMMMMMmy:` '),
+    wr('                  `hMMMMMMNmNMMMMMMMMMd-'),
+    wr('                  sMMMMMMd:.-/+sydNMMMMd'),
+    wr('              ``.+NMMMMNs`       -NMMMN:'),
+    wr('           .+yhdmMMMMNy-         yMMMN: '),
+    wr('   `   `.+yNMMMMNNNmh-           mMMMo  '),
+    wr('  sdyoydNNNNmhs+:-.`            `NMMh   '),
+    wr(' `NMMNNdo/-.                    :MMd`   '),
+    wr('`hMNmo`                         hMM-    '),
+    wr('yNy-                           oMMN`    '),
+    wr('h+                            +MMMMh    '),
+    wr('                              .odMMMy.  '),
+    wr('                                 -shmmy ').
+
+
+
