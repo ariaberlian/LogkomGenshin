@@ -52,6 +52,27 @@ pos(obstacle, 22, 10).
 pos(obstacle, 23, 10).
 pos(obstacle, 24, 10).
 
+
+%% WOLF AREA
+pos(wolfArea, 4, 16).
+
+pos(obstacle, 3, 12).
+pos(obstacle, 4, 12).
+pos(obstacle, 5, 12).
+pos(obstacle, 6, 12).
+pos(obstacle, 7, 12).
+pos(obstacle, 3, 13).
+pos(obstacle, 7, 13).
+pos(obstacle, 3, 14).
+pos(obstacle, 7, 14).
+pos(obstacle, 3, 15).
+pos(obstacle, 7, 15).
+pos(obstacle, 3, 16).
+pos(obstacle, 5, 16).
+pos(obstacle, 6, 16).
+pos(obstacle, 7, 16).
+
+
 %  fact Equipment
 % weapon(name, type, stat, statType, numberStat)
 weapon('Wooden Sword', 'Single-Handed Sword', 'atk', '+', 40).
@@ -297,6 +318,10 @@ segment(X, Y) :-
 segment(X, Y) :-
 	pos(boss, X, Y),
 	write('D'),
+	!.
+segment(X, Y) :-
+	pos(wolfArea, X, Y),
+	write('W'),
 	!.
 segment(X, Y) :-
 	pos(obstacle, X, Y),
@@ -704,13 +729,22 @@ setEnemy(X) :-
 	asserta(enemy(dragon)),
 	!.
 
+%% MENEMUKAN ENEMY di WOLF AREA
+foundEnemy(X, _) :-
+	X < 2,
+	inWolfArea,
+	setNotInBattle(0),
+	setEnemy(0),
+	!.
+	
 %% MENEMUKAN ENEMY
 foundEnemy(X, _) :-
 	X < 2,
-	setNotInBattle(0),
 	random(0, 3, Z),
+	setNotInBattle(0),
 	setEnemy(Z),
 	!.
+
 %% TIDAK MENEMUKAN ENEMY
 foundEnemy(X, M) :-
 	X > 1,
@@ -729,6 +763,12 @@ boosPos(X, Y) :-
 	setEnemy(3),
 	!.
 
+inWolfArea :-
+	pos(player, X, Y),
+	Y > 12,
+	Y < 16,
+	X > 3,
+	X < 7.
 
 
 notWall(X, Y) :-
