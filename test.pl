@@ -198,7 +198,7 @@ ascend :-
     write('S    ssSb S       S    S      b S    S S S    S           b S       S    b  S    O S'), nl,
     write(' S     S  S       S    S      P S    S S S    S           P S       S     b S    O S'), nl,
     write('  "sss"   P sSSss P    P ` ss\'  P    P P P    P      ` ss\'  P sSSss P     P P    P P'), nl,
-    write('Choose your character:'), nl,
+    write('Choose your ascencion job:'), nl,
     write('1. Swordsman'), nl,
     write('2. Archer'), nl,
     write('3. Wizard'), nl,
@@ -209,26 +209,31 @@ ascend :-
     
 pengecekan(1) :-
     write('Anda menjadi swordsman'),
+    retractall(job(_)),
 	asserta(job(swordsman)),
     retractall(jobNotFound(_)),
     asserta(jobFound(true)),!.
 pengecekan(2) :-
     write('Anda menjadi archer'),
+    retractall(job(_)),
     asserta(job(archer)),
     retractall(jobNotFound(_)),
     asserta(jobFound(true)),!.
 pengecekan(3) :-
     write('Anda menjadi wizard'),
+    retractall(job(_)),
 	asserta(job(wizard)),
     retractall(jobNotFound(_)),
     asserta(jobFound(true)),!.
 pengecekan(4) :-
     write('Anda menjadi priest'),
+    retractall(job(_)),
 	asserta(job(priest)),
     retractall(jobNotFound(_)),
     asserta(jobFound(true)),!.
 pengecekan(5) :-
     write('!!! ALLERT !!! ANDA MENJADI CARRY TUBES HATI-HATI'),
+    retractall(job(_)),
 	asserta(job(god)),
     retractall(jobNotFound(_)),
     asserta(jobFound(true)),!.
@@ -398,7 +403,7 @@ cekHPMusuh(X) :-
 cekHPMusuh(X) :-
     X > 0,
     monsterSTAT(ATK, HP)),
-    % monster nyerang diapain gtu
+    % monster nyerang diapain
 
 
 % attack :-
