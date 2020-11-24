@@ -1185,241 +1185,241 @@ finalHP2(HP) :-
 %% Battle Mode
 %% =======================================================
 
-% attack :-
-%     notInBattle(false),
-%     enemyCurrentHP(EnemyHP),
-%     enemy(Monster),
-%     enemyLevel(LVL),
-%     skillCDCounter(SkillCD),
-%     ultCDCounter(ULTCD),
-%     monsterSTAT(_, MAXHP),
-%     write(Monster), write(' '), write(' Level: '), write(LVL), nl,
-%     write('Darah Monster: '), write(EnemyHP), write('/'), write(MAXHP), nl,
-%     wr('1. Normal attack'),
-%     wr('2. Use Skill'),
-%     wr('3. Burst'),
-%     wr('4. UsePotion'),
-%     wr('5. status'),
-%     wr('6. run'),
-%     write('>> '),
-%     read(Input),
-%     attackOption(Input, DMGDEALT, SkillCD, ULTCD),
-%     pengecekanCD,
-%     fungsiCritikal(DMGDEALT, FINALDAMAGE),
-%     ZDAMAGE is round(FINALDAMAGE),
-%     write('Anda Memberikan '), write(ZDAMAGE), write(' damage!'), nl, nl,
-%     pengecekanEnemyHP(ZDAMAGE),
-%     % NewSkillCooldown is SkillCD - 1,
-%     % NewULTCooldown is ULTCD -1,
-%     % retractall(skillCDCounter(_)),
-%     % retractall(ultCDCounter(_)),
-%     % asserta(New)
-%     !.
+attack :-
+    notInBattle(false),
+    enemyCurrentHP(EnemyHP),
+    enemy(Monster),
+    enemyLevel(LVL),
+    skillCDCounter(SkillCD),
+    ultCDCounter(ULTCD),
+    monsterSTAT(_, MAXHP),
+    write(Monster), write(' '), write(' Level: '), write(LVL), nl,
+    write('Darah Monster: '), write(EnemyHP), write('/'), write(MAXHP), nl,
+    wr('1. Normal attack'),
+    wr('2. Use Skill'),
+    wr('3. Burst'),
+    wr('4. UsePotion'),
+    wr('5. status'),
+    wr('6. run'),
+    write('>> '),
+    read(Input),
+    attackOption(Input, DMGDEALT, SkillCD, ULTCD),
+    pengecekanCD,
+    fungsiCritikal(DMGDEALT, FINALDAMAGE),
+    ZDAMAGE is round(FINALDAMAGE),
+    write('Anda Memberikan '), write(ZDAMAGE), write(' damage!'), nl, nl,
+    pengecekanEnemyHP(ZDAMAGE),
+    % NewSkillCooldown is SkillCD - 1,
+    % NewULTCooldown is ULTCD -1,
+    % retractall(skillCDCounter(_)),
+    % retractall(ultCDCounter(_)),
+    % asserta(New)
+    !.
 
-% pengecekanCD:-
-%     skillCDCounter(CurrentSCD),
-%     ultCDCounter(CurrentULTCD),
-%     NewSCD is CurrentSCD - 1,
-%     NewUCD is CurrentULTCD -1,
-%     pengecekanApakahSCD0(NewSCD),
-%     pengecekanApakahUCD0(NewUCD),!.
+pengecekanCD:-
+    skillCDCounter(CurrentSCD),
+    ultCDCounter(CurrentULTCD),
+    NewSCD is CurrentSCD - 1,
+    NewUCD is CurrentULTCD -1,
+    pengecekanApakahSCD0(NewSCD),
+    pengecekanApakahUCD0(NewUCD),!.
 
-% pengecekanApakahSCD0(SkillCD) :-
-%     SkillCD = 0,
-%     retractall(skill(_)),
-%     retractall(skillCDCounter(_)),
-%     asserta(skillCDCounter(SkillCD)),!.
-% pengecekanApakahSCD0(SkillCD) :-
-%     retractall(skillCDCounter(_)),
-%     asserta(skillCDCounter(SkillCD)),!.
+pengecekanApakahSCD0(SkillCD) :-
+    SkillCD = 0,
+    retractall(skill(_)),
+    retractall(skillCDCounter(_)),
+    asserta(skillCDCounter(SkillCD)),!.
+pengecekanApakahSCD0(SkillCD) :-
+    retractall(skillCDCounter(_)),
+    asserta(skillCDCounter(SkillCD)),!.
 
-% pengecekanApakahUCD0(SkillCD) :-
-%     SkillCD = 0,
-%     retractall(skill(_)),
-%     retractall(ultCDCounter(_)),
-%     asserta(ultCDCounter(SkillCD)),!.
-% pengecekanApakahUCD0(SkillCD) :-
-%     retractall(ultCDCounter(_)),
-%     asserta(ultCDCounter(SkillCD)),!.
-
-
-% attackOption(1, DMGDEALT, _, _) :-
-%     job(swordsman),
-%     finalSTATS(ATK,_,_,_),
-%     DMGDEALT is ATK*(0.5),!.
-% attackOption(1, DMGDEALT, _, _) :-
-%     job(archer),
-%     finalSTATS(ATK,_,_,_),
-%     DMGDEALT is ATK*(0.5),!.
-% attackOption(1, DMGDEALT, _, _) :-
-%     job(wizard),
-%     finalSTATS(_,_,INT,_),
-%     DMGDEALT is INT*(0.5),!.
-% attackOption(1, DMGDEALT, _, _) :-
-%     job(priest),
-%     finalSTATS(_,_,INT,_),
-%     DMGDEALT is INT*(0.15),!.
-% attackOption(1, DMGDEALT, _, _) :-
-%     finalSTATS(ATK,_,_,_),
-%     DMGDEALT is ATK*(0.6),!.
+pengecekanApakahUCD0(SkillCD) :-
+    SkillCD = 0,
+    retractall(skill(_)),
+    retractall(ultCDCounter(_)),
+    asserta(ultCDCounter(SkillCD)),!.
+pengecekanApakahUCD0(SkillCD) :-
+    retractall(ultCDCounter(_)),
+    asserta(ultCDCounter(SkillCD)),!.
 
 
-% attackOption(2, DMGDEALT, SkillCD, _) :-
-%     job(swordsman),
-%     SkillCD =< 0,
-%     asserta(skill(on)),
-%     DMGDEALT is 0,
-%     retractall(skillCDCounter(_)),
-%     asserta(skillCDCounter(2)),
-%     !.
-% attackOption(2, DMGDEALT, SkillCD, _) :-
-%     job(archer),
-%     SkillCD =< 0,
-
-%     asserta(skill(on)),
-%     DMGDEALT is 0,    
-%     retractall(skillCDCounter(_)),
-%     asserta(skillCDCounter(2)),
-%     !.
-% attackOption(2, DMGDEALT, SkillCD, _) :-
-%     job(wizard),
-%     SkillCD =< 0,
-%     finalSTATS(_,_,INT,_),
-%     DMGDEALT is INT,
-%     retractall(skillCDCounter(_)),
-%     asserta(skillCDCounter(2)),
-%     !.
-% attackOption(2, DMGDEALT, SkillCD, _) :-
-%     job(priest),
-%     SkillCD =< 0,
-%     finalSTATS(_,_,INT,_),
-%     Heal is INT*(3.5),
-%     fungsiHeal(Heal, Regen),
-%     write('Meregenerasi '), write(Regen), wr(' HP'),
-%     DMGDEALT is 0,
-%     retractall(skillCDCounter(_)),
-%     asserta(skillCDCounter(2)),
-%     !.
-% attackOption(2, DMGDEALT, SkillCD, _) :-
-%     SkillCD =< 0,
-%     finalSTATS(ATK,_,_,_),
-%     DMGDEALT is ATK,
-%     retractall(skillCDCounter(_)),
-%     asserta(skillCDCounter(2)),
-%     !.
-% attackOption(2, _, SkillCD, _) :-
-%     SkillCD > 0,
-%     wr('Skill dalam Cooldown'), nl, !, attack.
-
-% attackOption(3,DMGDEALT,_,ULTCD) :-
-%     job(wizard),
-%     ULTCD =< 0,
-%     finalSTATS(ATK,_,INT,_),
-%     DMGDEALT is 4*sqrt(ATK*INT),
-%     retractall(ultCDCounter(_)),
-%     asserta(ultCDCounter(3)),
-%     !.
-% attackOption(3,DMGDEALT,_,ULTCD) :-
-%     job(priest),
-%     ULTCD =< 0,
-%     finalSTATS(_,_,INT,_),
-%     DMGDEALT is INT*2,
-%     Heal is INT*(0.5),
-%     fungsiHeal(Heal, Regen),
-%     write('Meregenerasi '), write(Regen), wr(' HP'),
-%     retractall(ultCDCounter(_)),
-%     asserta(ultCDCounter(3)),
-%     !.
-% attackOption(3,DMGDEALT,_,ULTCD) :-
-%     ULTCD =< 0,
-%     finalSTATS(ATK,_,_,_),
-%     DMGDEALT is 2*ATK,
-%     retractall(ultCDCounter(_)),
-%     asserta(ultCDCounter(3)),
-%     !.
-% attackOption(3,_,_,ULTCD) :-
-%     ULTCD > 0,
-%     wr('Burst dalam Cooldown'), !, attack, fail.
-
-% attackOption(4,_,_,_) :-
-%     usepotion,!.
-
-% attackOption(5,_,_,_) :-
-%     status, nl, nl, attack,!.
-
-% attackOption(6,0,_,_) :-
-%     random(1,5,N),
-%     (
-%     N = 1 -> !, wr('Gagal Melarikan Diri!!');
-%     N > 1 -> !, wr('Anda Telah Melarikan Diri'), !, run, fail
-%     ),!.
-
-% fungsiHeal(Gain, Regen) :-
-%     finalSTATS(_,_,_,MAXHP),
-%     currentHP(CurrentHP),
-%     NewHP is CurrentHP + Gain,
-%     MAXHP > NewHP,
-%     Regen is Gain,
-%     retractall(currentHP(CurrentHP)),
-%     asserta(currentHP(NewHP)),!.
-% fungsiHeal(Gain, Regen) :-
-%     finalSTATS(_,_,_,MAXHP),
-%     currentHP(CurrentHP),
-%     NewHP is CurrentHP + Gain,
-%     MAXHP =< NewHP,
-%     Regen is (MAXHP - CurrentHP),
-%     retractall(currentHP(CurrentHP)),
-%     asserta(currentHP(MAXHP)),!.
-
-% fungsiCritikal(DMGDEALT,FINALDAMAGE) :-
-%     random(1, 5, N),
-%     (
-%         N = 1 -> !, FINALDAMAGE is DMGDEALT*2, wr('KRITIKAL!!!');
-%         N > 1 -> !, FINALDAMAGE is DMGDEALT
-%     ),!.
-
-% pengecekanEnemyHP(DMGDEALT) :-
-%     enemyCurrentHP(EnemyHP),
-%     NewEnemyHP is (EnemyHP - DMGDEALT),
-
-%     monsterEXPGOLD(XP1, GOLD1),
-%     ekspi(XP),
-%     gold(GOLD),
-%     level(MYLEVEL),
-%     OldLevel is MYLEVEL,
-%     enemyLevel(LVL),
-%     monsterSTAT(ATK, _),
-%     Low is ATK - (10*(1.05)**LVL),
-%     High is ATK + (10*(1.05)**LVL),
-%     random(Low, High, EnemyDMG),
-%     (
-%         NewEnemyHP =< 0 -> !, NewGold is GOLD + GOLD1, NewXP is XP + XP1, retractall(ekspi(_)), retractall(gold(_)), asserta(gold(NewGold)), asserta(ekspi(NewXP)), level(NewLevel), fungsiRefreshDarah(OldLevel, NewLevel), retractall(enemyCurrentHP(_)), wr('Musuh telah mati,'), write('Anda Mendapatkan '), write(GOLD1), write(' Gold & '), write(XP1), wr('EXP!'),setNotInBattle(1), fail;
-%         NewEnemyHP > 0 -> !, retractall(enemyCurrentHP(_)), asserta(enemyCurrentHP(NewEnemyHP)), kenaSerangBro(EnemyDMG)
-%     ),!.
+attackOption(1, DMGDEALT, _, _) :-
+    job(swordsman),
+    finalSTATS(ATK,_,_,_),
+    DMGDEALT is ATK*(0.5),!.
+attackOption(1, DMGDEALT, _, _) :-
+    job(archer),
+    finalSTATS(ATK,_,_,_),
+    DMGDEALT is ATK*(0.5),!.
+attackOption(1, DMGDEALT, _, _) :-
+    job(wizard),
+    finalSTATS(_,_,INT,_),
+    DMGDEALT is INT*(0.5),!.
+attackOption(1, DMGDEALT, _, _) :-
+    job(priest),
+    finalSTATS(_,_,INT,_),
+    DMGDEALT is INT*(0.15),!.
+attackOption(1, DMGDEALT, _, _) :-
+    finalSTATS(ATK,_,_,_),
+    DMGDEALT is ATK*(0.6),!.
 
 
-% kenaSerangBro(DMGDEALT) :-
-%     currentHP(HP),
-%     % PENGURANGAN DMGDEALT DENGAN DEF
-%     finalSTATS(_,DEF,_,_),
-%     DMGTAKEN is DMGDEALT - (DEF/5),
-%     NewHP is HP - DMGTAKEN,
-%     enemy(ENEMY),
-%     (
-%         NewHP =< 0 -> !, retractall(currentHP(_)), asserta(currentHP(0)), retractall(gold(_)), asserta(gold(0)), wr('Anda Telah Mati'), wr('"Kemampuanmu hanya seginikah, aku menyesal membawamu kemari."'), wr('"Bocah lemah sepertinya tidak cocok untuk menggapai harapanku."'), retractall(notInBattle(_)), setNotInBattle(1), fail;
-%         NewHP > 0 -> !, retractall(currentHP(_)), asserta(currentHP(NewHP)), write(ENEMY), wr(' menyerang!!!'), write('Anda terkena '), write(DMGTAKEN),
-%         wr(' damage!'), nl,attack
-%     ),!.
+attackOption(2, DMGDEALT, SkillCD, _) :-
+    job(swordsman),
+    SkillCD =< 0,
+    asserta(skill(on)),
+    DMGDEALT is 0,
+    retractall(skillCDCounter(_)),
+    asserta(skillCDCounter(2)),
+    !.
+attackOption(2, DMGDEALT, SkillCD, _) :-
+    job(archer),
+    SkillCD =< 0,
 
-% fungsiRefreshDarah(OldLevel, NewLevel) :-
-%     NewLevel > OldLevel,
-%     currentHP(CurrentHP),
-%     finalSTATS(_,_,_,MAXHP),
-%     retractall(currentHP(CurrentHP)),
-%     asserta(currentHP(MAXHP)), nl,!.
+    asserta(skill(on)),
+    DMGDEALT is 0,    
+    retractall(skillCDCounter(_)),
+    asserta(skillCDCounter(2)),
+    !.
+attackOption(2, DMGDEALT, SkillCD, _) :-
+    job(wizard),
+    SkillCD =< 0,
+    finalSTATS(_,_,INT,_),
+    DMGDEALT is INT,
+    retractall(skillCDCounter(_)),
+    asserta(skillCDCounter(2)),
+    !.
+attackOption(2, DMGDEALT, SkillCD, _) :-
+    job(priest),
+    SkillCD =< 0,
+    finalSTATS(_,_,INT,_),
+    Heal is INT*(3.5),
+    fungsiHeal(Heal, Regen),
+    write('Meregenerasi '), write(Regen), wr(' HP'),
+    DMGDEALT is 0,
+    retractall(skillCDCounter(_)),
+    asserta(skillCDCounter(2)),
+    !.
+attackOption(2, DMGDEALT, SkillCD, _) :-
+    SkillCD =< 0,
+    finalSTATS(ATK,_,_,_),
+    DMGDEALT is ATK,
+    retractall(skillCDCounter(_)),
+    asserta(skillCDCounter(2)),
+    !.
+attackOption(2, _, SkillCD, _) :-
+    SkillCD > 0,
+    wr('Skill dalam Cooldown'), nl, !, attack.
+
+attackOption(3,DMGDEALT,_,ULTCD) :-
+    job(wizard),
+    ULTCD =< 0,
+    finalSTATS(ATK,_,INT,_),
+    DMGDEALT is 4*sqrt(ATK*INT),
+    retractall(ultCDCounter(_)),
+    asserta(ultCDCounter(3)),
+    !.
+attackOption(3,DMGDEALT,_,ULTCD) :-
+    job(priest),
+    ULTCD =< 0,
+    finalSTATS(_,_,INT,_),
+    DMGDEALT is INT*2,
+    Heal is INT*(0.5),
+    fungsiHeal(Heal, Regen),
+    write('Meregenerasi '), write(Regen), wr(' HP'),
+    retractall(ultCDCounter(_)),
+    asserta(ultCDCounter(3)),
+    !.
+attackOption(3,DMGDEALT,_,ULTCD) :-
+    ULTCD =< 0,
+    finalSTATS(ATK,_,_,_),
+    DMGDEALT is 2*ATK,
+    retractall(ultCDCounter(_)),
+    asserta(ultCDCounter(3)),
+    !.
+attackOption(3,_,_,ULTCD) :-
+    ULTCD > 0,
+    wr('Burst dalam Cooldown'), !, attack, fail.
+
+attackOption(4,_,_,_) :-
+    usepotion,nl, nl, attack,!.
+
+attackOption(5,_,_,_) :-
+    status, nl, nl, attack,!.
+
+attackOption(6,0,_,_) :-
+    random(1,5,N),
+    (
+    N = 1 -> !, wr('Gagal Melarikan Diri!!');
+    N > 1 -> !, wr('Anda Telah Melarikan Diri'), !, run, fail
+    ),!.
+
+fungsiHeal(Gain, Regen) :-
+    finalSTATS(_,_,_,MAXHP),
+    currentHP(CurrentHP),
+    NewHP is CurrentHP + Gain,
+    MAXHP > NewHP,
+    Regen is Gain,
+    retractall(currentHP(CurrentHP)),
+    asserta(currentHP(NewHP)),!.
+fungsiHeal(Gain, Regen) :-
+    finalSTATS(_,_,_,MAXHP),
+    currentHP(CurrentHP),
+    NewHP is CurrentHP + Gain,
+    MAXHP =< NewHP,
+    Regen is (MAXHP - CurrentHP),
+    retractall(currentHP(CurrentHP)),
+    asserta(currentHP(MAXHP)),!.
+
+fungsiCritikal(DMGDEALT,FINALDAMAGE) :-
+    random(1, 5, N),
+    (
+        N = 1 -> !, FINALDAMAGE is DMGDEALT*2, wr('KRITIKAL!!!');
+        N > 1 -> !, FINALDAMAGE is DMGDEALT
+    ),!.
+
+pengecekanEnemyHP(DMGDEALT) :-
+    enemyCurrentHP(EnemyHP),
+    NewEnemyHP is (EnemyHP - DMGDEALT),
+
+    monsterEXPGOLD(XP1, GOLD1),
+    ekspi(XP),
+    gold(GOLD),
+    level(MYLEVEL),
+    OldLevel is MYLEVEL,
+    enemyLevel(LVL),
+    monsterSTAT(ATK, _),
+    Low is ATK - (10*(1.05)**LVL),
+    High is ATK + (10*(1.05)**LVL),
+    random(Low, High, EnemyDMG),
+    (
+        NewEnemyHP =< 0 -> !, NewGold is GOLD + GOLD1, NewXP is XP + XP1, retractall(ekspi(_)), retractall(gold(_)), asserta(gold(NewGold)), asserta(ekspi(NewXP)), level(NewLevel), fungsiRefreshDarah(OldLevel, NewLevel), retractall(enemyCurrentHP(_)), wr('Musuh telah mati,'), write('Anda Mendapatkan '), write(GOLD1), write(' Gold & '), write(XP1), wr('EXP!'),setNotInBattle(1), fail;
+        NewEnemyHP > 0 -> !, retractall(enemyCurrentHP(_)), asserta(enemyCurrentHP(NewEnemyHP)), kenaSerangBro(EnemyDMG)
+    ),!.
+
+
+kenaSerangBro(DMGDEALT) :-
+    currentHP(HP),
+    % PENGURANGAN DMGDEALT DENGAN DEF
+    finalSTATS(_,DEF,_,_),
+    DMGTAKEN is DMGDEALT - (DEF/5),
+    NewHP is HP - DMGTAKEN,
+    enemy(ENEMY),
+    (
+        NewHP =< 0 -> !, retractall(currentHP(_)), asserta(currentHP(0)), retractall(gold(_)), asserta(gold(0)), wr('Anda Telah Mati'), wr('"Kemampuanmu hanya seginikah, aku menyesal membawamu kemari."'), wr('"Bocah lemah sepertinya tidak cocok untuk menggapai harapanku."'), retractall(notInBattle(_)), setNotInBattle(1), fail;
+        NewHP > 0 -> !, retractall(currentHP(_)), asserta(currentHP(NewHP)), write(ENEMY), wr(' menyerang!!!'), write('Anda terkena '), write(DMGTAKEN),
+        wr(' damage!'), nl,attack
+    ),!.
+
+fungsiRefreshDarah(OldLevel, NewLevel) :-
+    NewLevel > OldLevel,
+    currentHP(CurrentHP),
+    finalSTATS(_,_,_,MAXHP),
+    retractall(currentHP(CurrentHP)),
+    asserta(currentHP(MAXHP)), nl,!.
     
-% fungsiRefreshDarah(_,_) :-
-%     nl,!.
+fungsiRefreshDarah(_,_) :-
+    nl,!.
 
 % CHARACTER LEVEL AND STATUS
 %% ==============================================================
