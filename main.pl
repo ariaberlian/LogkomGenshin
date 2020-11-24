@@ -517,9 +517,9 @@ usePot(Name, Stat, StatType, StatNum) :-
 %% STORE
 %% ==============================================================
 jajan(M, P, Result) :-
-    M >= P, Result is M-P.
+    M >= P, Result is M-P,!.
 jajan(M, P, _Result) :-
-    M < P, write('Gold anda tidak mencukupi!'),nl,!.
+    M < P, !,write('Gold anda tidak mencukupi!'),nl,fail.
 
 store :-
     write('Selamat datang di store. Ingin belanja apa?'),nl,
@@ -546,7 +546,6 @@ store2 :-
     storeOpt(Input),!.
 
 storeOpt(1) :-
-    write('Anda telah membeli Pandora Box.'),nl,
     gold(M),
     jajan(M, 300, SisaUang),
     random(1, 101, N),
@@ -554,6 +553,7 @@ storeOpt(1) :-
     gacha(Eq, Grade, N, N1),
     retractall(gold(_)),
     asserta(gold(SisaUang)),
+    write('Anda telah membeli Pandora Box.'),nl,
     write('Membuka Pandora Box....'),nl,
     write('Anda mendapatkan: '),write(Eq),write(' dengan tingkat kelangkaan '),write(Grade),
     bag(Y),
@@ -594,76 +594,82 @@ gacha(Eq,'SS', N, N1) :-
     N >= 96, N =< 100 -> grade('SS', Eq, N1),!.
 
 buyPot(1) :- 
+    gold(M),
+    jajan(M, 50, SisaUang),
+    retract(gold(_)),
+    asserta(gold(SisaUang)),
     write('Anda telah membeli Health Potion Small.'),nl,
     write('Potion dimasukkan ke dalam inventory'),nl,
     bag(Y),
     push('Health Potion Small', Y, B),
     retract(bag(_)),
     asserta(bag(B)),
-    gold(M),
-    jajan(M, 50, SisaUang),
-    retract(gold(_)),
-    asserta(gold(SisaUang)),!.
+    !.
 
 buyPot(2) :- 
+    gold(M),
+    jajan(M, 100, SisaUang),
+    retract(gold(_)),
+    asserta(gold(SisaUang)),
     write('Anda telah membeli Health Potion Medium.'),nl,
     write('Potion dimasukkan ke dalam inventory'),nl,
     bag(Y),
     push('Health Potion Medium', Y, B),
     retract(bag(_)),
     asserta(bag(B)),
-    gold(M),
-    jajan(M, 100, SisaUang),
-    retract(gold(_)),
-    asserta(gold(SisaUang)),!.
+    !.
 
 buyPot(3) :- 
+    gold(M),
+    jajan(M, 200, SisaUang),
+    retract(gold(_)),
+    asserta(gold(SisaUang)),
     write('Anda telah membeli Health Potion Large.'),nl,
     write('Potion dimasukkan ke dalam inventory'),nl,
     bag(Y),
     push('Health Potion Large', Y, B),
     retract(bag(_)),
     asserta(bag(B)),
+    !.
+
+buyPot(4) :- 
     gold(M),
     jajan(M, 200, SisaUang),
     retract(gold(_)),
-    asserta(gold(SisaUang)),!.
-
-buyPot(4) :- 
+    asserta(gold(SisaUang)),
     write('Anda telah membeli Rage Potion.'),nl,
     write('Potion dimasukkan ke dalam inventory'),nl,
     bag(Y),
     push('Rage Potion', Y, B),
     retract(bag(_)),
     asserta(bag(B)),
+    !.
+
+buyPot(5) :- 
     gold(M),
     jajan(M, 200, SisaUang),
     retract(gold(_)),
-    asserta(gold(SisaUang)),!.
-
-buyPot(5) :- 
+    asserta(gold(SisaUang)),
     write('Anda telah membeli Smart Potion.'),nl,
     write('Potion dimasukkan ke dalam inventory'),nl,
     bag(Y),
     push('Smart Potion', Y, B),
     retract(bag(_)),
     asserta(bag(B)),
+    !.
+
+buyPot(6) :- 
     gold(M),
     jajan(M, 200, SisaUang),
     retract(gold(_)),
-    asserta(gold(SisaUang)),!.
-
-buyPot(6) :- 
+    asserta(gold(SisaUang)),
     write('Anda telah membeli Rock Potion.'),nl,
     write('Potion dimasukkan ke dalam inventory'),nl,
     bag(Y),
     push('Rock Potion', Y, B),
     retract(bag(_)),
     asserta(bag(B)),
-    gold(M),
-    jajan(M, 200, SisaUang),
-    retract(gold(_)),
-    asserta(gold(SisaUang)),!.
+    !.
 
 buyPot(X) :-
     X > 6, nl,
