@@ -218,9 +218,9 @@ start :-
     retractall(gold(_)),
     retractall(job(_)),
 
-    asserta(job(wizard)),
-    asserta(ekspi(288000)),
-    asserta(gold(99999999999999)),
+    asserta(job(programmer)),
+    asserta(ekspi(0)),
+    asserta(gold(0)),
     finalSTATS(_,_,_,HP),
     asserta(currentHP(HP)),
 	asserta(pos(player, 1, 1)),
@@ -1393,6 +1393,7 @@ finalHP2(HP) :-
 %     High is ATK + (10*(1.05)**LVL),
 %     random(Low, High, EnemyDMG),
 %     (
+%         NewEnemyHP =<0, enemy(dragon) -> !, wr('Anda telah mengalahkan NAGA!'),wr('.'),wr('.'),wr('.'),wr('Ketik apa saja untuk melanjutkan...'), read(_),wr('Anda mendekati naga itu...'),read(_),wr('"Kemarilah bocah...." sang naga berbicara'),read(_),wr('Kalahkan dewi itu, atau...'), read(_), wr('Uhhuk-uhhuk-uhhuk...'),read(_),wr('atau kau akan ................'),nl,nl,nl,wr('COMING "VERY" SOON, GENSHIN SEKAI II Forgotten God'),wr('~Fin'),fail;
 %         NewEnemyHP =< 0 -> !, NewGold is GOLD + GOLD1, NewXP is XP + XP1, retractall(ekspi(_)), retractall(gold(_)), asserta(gold(NewGold)), asserta(ekspi(NewXP)), level(NewLevel), fungsiRefreshDarah(OldLevel, NewLevel), retractall(enemyCurrentHP(_)), wr('Musuh telah mati,'), write('Anda Mendapatkan '), write(GOLD1), write(' Gold & '), write(XP1), wr('EXP!'),setNotInBattle(1), fail;
 %         NewEnemyHP > 0 -> !, retractall(enemyCurrentHP(_)), asserta(enemyCurrentHP(NewEnemyHP)), kenaSerangBro(EnemyDMG)
 %     ),!.
