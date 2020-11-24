@@ -218,7 +218,7 @@ start :-
     retractall(gold(_)),
     retractall(job(_)),
 
-    asserta(job(wizard)),
+    asserta(job(swordsman)),
     asserta(ekspi(288000)),
     asserta(gold(99999999999999)),
     finalSTATS(_,_,_,HP),
@@ -741,6 +741,7 @@ setEnemy(X) :-
 	monsterSTAT(_,HP),
     retractall(enemyCurrentHP(_)),
     asserta(enemyCurrentHP(HP)),
+    retractall(skill(_)),
     retractall(skillCDCounter(_)),
     retractall(ultCDCounter(_)),
     asserta(skillCDCounter(2)),
@@ -759,6 +760,7 @@ setEnemy(X) :-
     monsterSTAT(_,HP),
     retractall(enemyCurrentHP(_)),
     asserta(enemyCurrentHP(HP)),
+    retractall(skill(_)),
     retractall(skillCDCounter(_)),
     retractall(ultCDCounter(_)),
     asserta(skillCDCounter(2)),
@@ -777,6 +779,7 @@ setEnemy(X) :-
     monsterSTAT(_,HP),
     retractall(enemyCurrentHP(_)),
     asserta(enemyCurrentHP(HP)),
+    retractall(skill(_)),
     retractall(skillCDCounter(_)),
     retractall(ultCDCounter(_)),
     asserta(skillCDCounter(2)),
@@ -793,6 +796,7 @@ setEnemy(X) :-
 	retract(enemy(_)),
 	asserta(enemy(dragon)),
     monsterSTAT(_,HP),
+    retractall(skill(_)),
     retractall(enemyCurrentHP(_)),
     asserta(enemyCurrentHP(HP)),
     retractall(skillCDCounter(_)),
@@ -1204,10 +1208,10 @@ attack :-
     write('>> '),
     read(Input),
     attackOption(Input, DMGDEALT, SkillCD, ULTCD),
-    pengecekanCD,
     fungsiCritikal(DMGDEALT, FINALDAMAGE),
-    ZDAMAGE is round(FINALDAMAGE),
+    ZDAMAGE is round(FINALDAMAGE + 0.0001),
     write('Anda Memberikan '), write(ZDAMAGE), write(' damage!'), nl, nl,
+    
     pengecekanEnemyHP(ZDAMAGE),
     % NewSkillCooldown is SkillCD - 1,
     % NewULTCooldown is ULTCD -1,
@@ -1233,11 +1237,6 @@ pengecekanApakahSCD0(SkillCD) :-
     retractall(skillCDCounter(_)),
     asserta(skillCDCounter(SkillCD)),!.
 
-pengecekanApakahUCD0(SkillCD) :-
-    SkillCD = 0,
-    retractall(skill(_)),
-    retractall(ultCDCounter(_)),
-    asserta(ultCDCounter(SkillCD)),!.
 pengecekanApakahUCD0(SkillCD) :-
     retractall(ultCDCounter(_)),
     asserta(ultCDCounter(SkillCD)),!.
@@ -1267,6 +1266,7 @@ attackOption(1, DMGDEALT, _, _) :-
 attackOption(2, DMGDEALT, SkillCD, _) :-
     job(swordsman),
     SkillCD =< 0,
+    retractall(skill(_)),
     asserta(skill(on)),
     DMGDEALT is 0,
     retractall(skillCDCounter(_)),
@@ -1275,7 +1275,7 @@ attackOption(2, DMGDEALT, SkillCD, _) :-
 attackOption(2, DMGDEALT, SkillCD, _) :-
     job(archer),
     SkillCD =< 0,
-
+    retractall(skill(_)),
     asserta(skill(on)),
     DMGDEALT is 0,    
     retractall(skillCDCounter(_)),
@@ -1405,10 +1405,11 @@ kenaSerangBro(DMGDEALT) :-
     DMGTAKEN is DMGDEALT - (DEF/5),
     NewHP is HP - DMGTAKEN,
     enemy(ENEMY),
+    DMGTAKEN2 is round(DMGTAKEN + 0.0001),
     (
         NewHP =< 0 -> !, retractall(currentHP(_)), asserta(currentHP(0)), retractall(gold(_)), asserta(gold(0)), wr('Anda Telah Mati'), wr('"Kemampuanmu hanya seginikah, aku menyesal membawamu kemari."'), wr('"Bocah lemah sepertinya tidak cocok untuk menggapai harapanku."'), retractall(notInBattle(_)), setNotInBattle(1), fail;
-        NewHP > 0 -> !, retractall(currentHP(_)), asserta(currentHP(NewHP)), write(ENEMY), wr(' menyerang!!!'), write('Anda terkena '), write(DMGTAKEN),
-        wr(' damage!'), nl,attack
+        NewHP > 0 -> !, retractall(currentHP(_)), asserta(currentHP(NewHP)), write(ENEMY), wr(' menyerang!!!'), write('Anda terkena '), write(DMGTAKEN2),
+        wr(' damage!'), nl,pengecekanCD,attack
     ),!.
 
 fungsiRefreshDarah(OldLevel, NewLevel) :-
@@ -1465,7 +1466,7 @@ help :-
     write('% 6. s         : gerak ke selatan 1 langkah                                       %'), nl,
     write('% 7. d         : gerak ke ke timur 1 langkah                                      %'), nl,
     write('% 8. a         : gerak ke barat 1 langkah                                         %'), nl,
-    write('% 9. store     : Membeli barang saat berada di toko \'S\'                         %'), nl,
+    write('% 9. store     : Membeli barang saat berada di toko   \'S\'                         %'), nl,
     write('% 10.inventory : Membuka tas                                                      %'), nl,
     write('% 10.help      : menampilkan segala bantuan                                       %'), nl,
     write('%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%'), nl,!.
