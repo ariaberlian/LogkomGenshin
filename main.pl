@@ -440,32 +440,36 @@ inventory :-
     inventOption(Input),!.
 
 inventOption(1) :- 
-    write('Apa nama item yang ingin anda buang?'),nl,
+    write('Apa nama item yang ingin anda buang? (ketik kembali untuk membatalkan)'),nl,
     bag(B),
     % dupRem(B,C),
     % readBag(B,C),!,
     write('>> '),
     read(Input),
     (
-       \+ member(Input, B)-> !,write('Item yang anda masukan tidak ada dalam inventory.'), inventOption(1); 
-       write('Anda membuang '), write(Input),nl,throw(Input, B, Res),retract(bag(_)),asserta(bag(Res))
+        Input = kembali ->!,nl, inventory;
+        \+ member(Input, B)-> !,write('Item yang anda masukan tidak ada dalam inventory.'),nl,nl, inventOption(1); 
+        write('Anda membuang '), write(Input),nl,throw(Input, B, Res),retract(bag(_)),asserta(bag(Res))
     ).
 
 inventOption(2) :-
-    write('Apa nama item yang ingin anda gunakan?'),nl,
+    write('Apa nama item yang ingin anda gunakan? (ketik kembali untuk membatalkan)' ),nl,
     bag(B),
     % dupRem(B,C),
     % readBag(B,C),!,
     write('>> '),
     read(Input),
     ( 
-        \+ member(Input, B) ->!, write('Item yang anda masukan tidak ada dalam inventory.'),inventOption(2);
+        Input = kembali ->!,nl, inventory;
+        \+ member(Input, B) ->!, write('Item yang anda masukan tidak ada dalam inventory.'),nl,nl,inventOption(2);
          detail(Input, Jenis, Stat, StatType, StatNum),job(Job),
         (Jenis = potion -> usePot(Name, Stat, StatType, StatNum) ; useEquip(Input, Jenis, Stat, StatType, StatNum, Job))
     ),
     write('Item '), write(Input), write(' telah digunakan!'),nl.
 
-inventOption(3):- !,fail.
+inventOption(X):- 
+    X > 2,
+    !,fail.
 
 useEquip(Name, Jenis, Stat, StatType, StatNum, Job) :- 
     (
@@ -482,6 +486,7 @@ usepotion :-
     wr('4. Rage Potion, Efek: atk +10% selama 3 turn'),
     wr('5. Smart Potion, Efek: int +10% selama 3 turn'),
     wr('6. Rock Potion, Efek: def +10% selama 3 turn'),
+    write('>> '),
     read(Input),
     (
     Input = 1 -> usePot('Health Potion Small', 'recover Hp', '%', 15);
@@ -518,6 +523,20 @@ jajan(M, P, _Result) :-
 
 store :-
     write('Selamat datang di store. Ingin belanja apa?'),nl,
+    gold(Gold),
+    write('Gold anda saat ini: '), write(Gold),nl,
+    write('1. Pandora Box 300G'),nl,
+    write('2. Potion'),nl,
+    write('3. Keluar'),nl,
+    write('Masukkan nomor yang dipilih'),nl,
+    write('>> '),
+    read(Input),
+    storeOpt(Input),!.
+
+store2 :-
+    write('Terimakasih telah membeli! Ingin membeli barang lagi?'),nl,
+    gold(Gold),
+    write('Gold anda saat ini: '), write(Gold),nl,
     write('1. Pandora Box 300G'),nl,
     write('2. Potion'),nl,
     write('3. Keluar'),nl,
@@ -540,7 +559,8 @@ storeOpt(1) :-
     bag(Y),
     push(Eq, Y, B),
     retract(bag(_)),
-    asserta(bag(B)),!.
+    asserta(bag(B)),nl,!,nl,
+    store2.
 
 storeOpt(2) :-
     write('1. Health Potion Small  50G'),nl,
@@ -549,8 +569,17 @@ storeOpt(2) :-
     write('4. Rage Potion 200G'),nl,
     write('5. Smart Potion 200G'),nl,
     write('6. Rock Potion 200G'),nl,
+    write('7. kembali'),nl,
+    write('>> '),
     read(Input),
-    buyPot(Input),!.
+    buyPot(Input),!,nl,
+    store2.
+
+storeOpt(X) :-
+    X > 2,
+    nl,
+    wr('Anda keluar dari toko'),!,fail.
+
 
 gacha(Eq,'B', N, N1) :-
     N >= 1, N < 66 -> grade('B', Eq, N1),!.
@@ -635,7 +664,10 @@ buyPot(6) :-
     jajan(M, 200, SisaUang),
     retract(gold(_)),
     asserta(gold(SisaUang)),!.
- 
+
+buyPot(X) :-
+    X > 6, nl,
+    store,!.
 
 absolute(X,Y):-
     Y is round(sqrt(X**2)).
@@ -692,6 +724,7 @@ setEnemy(X) :-
     randomEnemyLevel(CurrentLVL),
     enemyLevel(EnemyLevel),
 	write('You found a level '), write(EnemyLevel), write(' Wolf!!!!'), nl,
+    gambar(wolf), nl,
 	retract(enemy(_)),
 	asserta(enemy(wolf)),
 	
@@ -896,20 +929,20 @@ monsterEXPGOLD(XP, GOLD) :-
 
 monsterSTAT(ATK, HP) :-
     enemyLevel(LVL),
-    ATK is round(300*1.1**(LVL) + 0.00000001),
-    HP is round(400*1.1**(LVL) + 0.00000001),
+    ATK is round(300*1.1**(LVL) + 0.00001),
+    HP is round(400*1.1**(LVL) + 0.00001),
     enemy(goblin),!.
     
 monsterSTAT(ATK, HP) :-
     enemyLevel(LVL),
-    ATK is round(200*1.1**(LVL) + 0.00000001),
-    HP is round(200*1.1**(LVL) + 0.00000001),
+    ATK is round(200*1.1**(LVL) + 0.00001),
+    HP is round(200*1.1**(LVL) + 0.00001),
     enemy(slime),!.
 
 monsterSTAT(ATK, HP) :-
     enemyLevel(LVL),
-    ATK is round(400*1.1**(LVL) + 0.00000001),
-    HP is round(400*1.1**(LVL) + 0.00000001),
+    ATK is round(400*1.1**(LVL) + 0.00001),
+    HP is round(400*1.1**(LVL) + 0.00001),
     enemy(wolf),!.
 
 
@@ -976,7 +1009,7 @@ finalATK2(ATK) :-
     finalATK3(ATK1),
     equipedAcc(_,'atk', '%', ATKPercent),
     baseSTAT(BASEATK,_,_,_),
-    ATK2 is BASEATK*(1+(ATKPercent/100)),
+    ATK2 is BASEATK*(ATKPercent/100),
     ATK is ATK1 + ATK2,!.
 finalATK2(ATK) :-
     finalATK3(ATK2),
@@ -1008,8 +1041,10 @@ finalDEF2(DEF) :-
     DEF is DEF1 + StatNum,!.
 finalDEF2(DEF):-
     finalDEF3(DEF1),
+    baseSTAT(_,BASEDEF,_,_),
     equipedAcc(_, 'def', '%', StatNum),
-    DEF is DEF1*(1+(StatNum/100)),!.
+    DEF2 is BASEDEF*(StatNum/100),
+    DEF is DEF1 + DEF2,!.
 finalDEF2(DEF) :-
     finalDEF3(DEF),!.
 
@@ -1041,7 +1076,7 @@ finalINT2(INT) :-
     finalINT3(INT1),
     equipedAcc(_,'int', '%', INTPercent),
     baseSTAT(_,_,BaseINT,_),
-    INT2 is BaseINT*(1+(INTPercent/100)),
+    INT2 is BaseINT*(INTPercent/100),
     INT is INT1 + INT2,!.
 finalINT2(INT) :-
     finalINT3(INT2),
@@ -1066,8 +1101,8 @@ finalHP(HP) :-
 finalHP(HP) :-
     finalHP2(HP1),
     equipedBoots(_,'hp', '%', HPPercent),
-    baseSTAT(_,_,BaseINT,_),
-    HP2 is BaseINT*(1+(HPPercent/100)),
+    baseSTAT(_,_,_,BASEHP),
+    HP2 is BASEHP*(HPPercent/100),
     HP is HP1 + HP2,!.
 finalHP(HP) :-
     finalHP2(HP2),
@@ -1119,18 +1154,32 @@ wr(Line) :-
     write(Line),nl.
 
 help :-
-    write('%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%'), nl,
-    write('%                              Genshin Asik                                    %'), nl,
-    write('% 1. start  : untuk memulai petualanganmu                                      %'), nl,
-    write('% 2. map    : untuk menampilkan map                                            %'), nl,
-    write('% 3. ascend : ascencion untu mengganti job anda (Minimal LVL 3)                %'), nl,
-    write('% 4. status : menampilkan kondisimu terkini                                    %'), nl,
-    write('% 5. w      : gerak ke utara 1 langkah                                         %'), nl,
-    write('% 6. s      : gerak ke selatan 1 langkah                                       %'), nl,
-    write('% 7. d      : gerak ke ke timur 1 langkah                                      %'), nl,
-    write('% 8. a      : gerak ke barat 1 langkah                                         %'), nl,
-    write('% 9. help   : menampilkan segala bantuan                                       %'), nl,
-    write('%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%'), nl.
+    notInBattle(true),
+    write('%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%'), nl,
+    write('%                                 Genshin Asik                                    %'), nl,
+    write('% 1. start     : untuk memulai petualanganmu                                      %'), nl,
+    write('% 2. map       : untuk menampilkan map                                            %'), nl,
+    write('% 3. ascend    : ascencion untu mengganti job anda (Minimal LVL 3)                %'), nl,
+    write('% 4. status    : menampilkan kondisimu terkini                                    %'), nl,
+    write('% 5. w         : gerak ke utara 1 langkah                                         %'), nl,
+    write('% 6. s         : gerak ke selatan 1 langkah                                       %'), nl,
+    write('% 7. d         : gerak ke ke timur 1 langkah                                      %'), nl,
+    write('% 8. a         : gerak ke barat 1 langkah                                         %'), nl,
+    write('% 9. store     : Membeli barang saat berada di toko \'S\'                           %'), nl,
+    write('% 10.inventory : Membuka tas                                                      %'), nl,
+    write('% 10.help      : menampilkan segala bantuan                                       %'), nl,
+    write('%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%'), nl,!.
+
+help :-
+    \+ notInBattle(true),
+    write('%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%'), nl,
+    write('%                               CARA BERTARUNG                                    %'), nl,
+    write('% 1. attack    : menyerang musuh                                                  %'), nl,
+    write('% 2. usepotion : menggunakan potion                                               %'), nl,
+    write('% 3. run       : Melarikan diri dari pertarungan, ada kemungkinan gagal           %'), nl,
+    write('% 4. status    : menampilkan kondisimu terkini                                    %'), nl,
+    write('%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%'), nl,!.
+
 
 gambar(goblin) :-
     % goblin                                              
@@ -1251,7 +1300,41 @@ gambar(running) :-
     wr('h+                            +MMMMh    '),
     wr('                              .odMMMy.  '),
     wr('                                 -shmmy '),
-    wr('Joestar Family Secret Move: Nigerundayoo!!').
+    wr('Joestar Family Secret Move: Nigerundayoo!!'),nl,!.
 
 
 
+gambar(wolf) :-                                       
+    wr('            `sd/                                  '),
+    wr('            ody/:`                                '),
+    wr('          `-hNs:...``                             '),
+    wr('          +ydh+-``-::.`                           '),
+    wr('           .-..` ` ``:``                          '),
+    wr('            .`   ```-+o-.`                        '),
+    wr('            ``    `./ydso/-`                      '),
+    wr('          ..```.```.+mmNmys+-                     '),
+    wr('          :-```--..--smmmddy/.                    '),
+    wr('          .:.`.-/:.`-/shmMMo                      '),
+    wr('          `/.`.:od+.-:oohmNMh:                    '),
+    wr('           .---:oh:--:oshmmNNNNho//:.             '),
+    wr('           .-..-/s:--/ydmNNNmmNMNMMMNmmy/`        '),
+    wr('           --....:--/ohdmmNNNNNNNMNMNNmdNN-       '),
+    wr('           ./--:o/:+yhhysymNNNNmNNNNNNmmNNm.      '),
+    wr('           --::/--.``..-+ymmNNNddmdNNmmmNNNd      '),
+    wr('           -.--...````-:/sNdhmyoyhhmNmmmmmmM:     '),
+    wr('           .-.`..`````.:oydy+y//+sohds+ohmmN+     '),
+    wr('            -``..``````.oydo--:--//+.`-ohmmN+     '),
+    wr('            ..`.-..```.-+sh/.```-:+-``./ydmN-     '),
+    wr('             ..-+o:--..:+ys:...-:++.``.:sdmN      '),
+    wr('             `..:hds::--+yo/:--/yms.```:oymy      '),
+    wr('              ..:h-.:/:-/syoosdm+..+.`.:oym/      '),
+    wr('              ../d    -:/ymdmmy` `.:o:`-/yd.      '),
+    wr('              `.+o    `.+hyhdm`  --:/ys:-+h/      '),
+    wr('              `-s.    `.o+:syd` `--/ssyo::oh/     '),
+    wr('              `-o`    ``+:./oh/ `::shhys..:+y.    '),
+    wr('              `-o     ..o:-:/o+  ysydmd`  -:s.    '),
+    wr('              `:+     ..++://.   :mNNd.   .:o`    '),
+    wr('             `./o    `.:/o/.      oNy.``.--/o     '),
+    wr('           ./+osy:::::-/oo/://:::::+:::o+/s/+.`   '),
+    wr('          .-:////////::/+/-----....````````       '),
+    wr('                     ```                          '),!.
