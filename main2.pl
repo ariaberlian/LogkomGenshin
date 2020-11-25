@@ -1466,7 +1466,8 @@ kenaSerangBro(DMGDEALT) :-
     ),!.
 
 fungsiRefreshDarah(OldLevel, NewLevel) :-
-    NewLevel > OldLevel,
+    NewLevel > OldLevel,nl,
+    wr('LEVEL UP!!!!'),
     currentHP(CurrentHP),
     finalSTATS(_,_,_,MAXHP),
     retractall(currentHP(CurrentHP)),
