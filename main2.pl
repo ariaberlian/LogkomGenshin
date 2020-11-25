@@ -24,7 +24,10 @@
 :- dynamic(skillCDCounter/1).
 :- dynamic(ultCDCounter/1).
 :- dynamic(enemyCurrentHP/1).
-
+:- dynamic(questFunc/3).
+:- dynamic(questCounter/1).
+:- dynamic(adaQuest/1).
+:- dynamic(isDragonDead/1).
 
 %% FACT
 %% ==============================================================
@@ -203,6 +206,7 @@ equipedBoots('Sendal Swallow', 'hp', '+', 1).
 equipedAcc('Ali Ring', 'atk', '+', 1). 
 
 
+
 %% MAIN MENU
 %% ==============================================================
 
@@ -212,14 +216,15 @@ start :-
 	retract(enemy(_)),
 	retract(notInBattle(_)),
 	retract(started(_)),
-
+    retractall(questFunc(_,_,_)),
+    asserta(questFunc(0,0,0)),
     retractall(currentHP(_)),
     retractall(ekspi(_)),
     retractall(gold(_)),
     retractall(job(_)),
 
-    asserta(job(swordsman)),
-    asserta(ekspi(288000)),
+    asserta(job(god)),
+    asserta(ekspi(900)),
     asserta(gold(99999999999999)),
     finalSTATS(_,_,_,HP),
     asserta(currentHP(HP)),
@@ -227,6 +232,7 @@ start :-
 	asserta(enemy(null)),
 	asserta(notInBattle(true)),
 	asserta(started(true)),
+    asserta(questCounter(1)),
 
 	write('Game is Starting...'), nl,
     write('Youkouso'), nl,
@@ -241,9 +247,19 @@ start :-
     wr('Pada suatu hari yang cerah di negara Belzard, hiduplah seorang pemuda biasa yang sedang asik bermain baseball'),
     wr('bersama temannya. *Ctankk* "HOMERUNNNN!!!". Seorang anak teriak. Lalu pemuda bernama Issei berlari mengejar'),
     wr('bola itu meskipun sudah keluar dari arena bermain. Dia terus berlari hingga berpapasan dengan truck-kun.'),
-    wr('Issei membuka mata. Dia melihat sesosok wanita cantik di depannya.Wanita itu berkata, "Ara~ara aramaa~,'),
-    wr('Sekarang kau punya dua pilihan, yaitu untuk pergi ke surga atau menjalani hidup baru di dunia yang baru."'),
-    wr('Tanpa pikir panjang, Issei menjawab, "Aku akan menjadi raja harem di dunia yang baru itu!".'),nl,
+    wr('Issei membuka mata. Dia melihat sesosok wanita cantik di depannya.Wanita itu berkata, [Ara~ara aramaa~,'),
+    wr('Sekarang kau punya dua pilihan, yaitu untuk pergi ke surga atau menjalani hidup baru di dunia yang baru.]'),
+    wr('Tanpa pikir panjang, Issei menjawab, "Aku akan menjadi raja harem di dunia yang baru itu!".'), nl,
+    wr('[Jelajahilah dunia ini....'),
+    wr('temuilah Aku jika kamu sudah siap]'),
+    wr('...'),
+    write('>> '),
+    read(_),
+    wr('...Dewi itu menghilang seketika'),
+    wr('"tunggu!!! dimana aku harus mencarimu?"'),
+    wr('...'),
+    
+    nl,
 
     help,nl,
 
@@ -527,6 +543,8 @@ jajan(M, P, _Result) :-
     M < P, !,write('Gold anda tidak mencukupi!'),nl,fail.
 
 store :-
+    nl,
+    pos(player, 7, 2),
     write('Selamat datang di store. Ingin belanja apa?'),nl,
     gold(Gold),
     write('Gold anda saat ini: '), write(Gold),nl,
@@ -583,7 +601,7 @@ storeOpt(2) :-
 storeOpt(X) :-
     X > 2,
     nl,
-    wr('Anda keluar dari toko'),!,fail.
+    wr('Anda keluar dari toko'),!,true.
 
 
 gacha(Eq,'B', N, N1) :-
@@ -745,7 +763,8 @@ setEnemy(X) :-
     retractall(skillCDCounter(_)),
     retractall(ultCDCounter(_)),
     asserta(skillCDCounter(2)),
-    asserta(ultCDCounter(3)),
+    asserta(ultCDCounter(3)), nl, nl,
+    attack,
 	!.
 %% SLIME
 setEnemy(X) :-
@@ -764,7 +783,8 @@ setEnemy(X) :-
     retractall(skillCDCounter(_)),
     retractall(ultCDCounter(_)),
     asserta(skillCDCounter(2)),
-    asserta(ultCDCounter(3)),
+    asserta(ultCDCounter(3)),nl, nl,
+    attack,
 	!.
 %% GOBLIN
 setEnemy(X) :-
@@ -783,7 +803,8 @@ setEnemy(X) :-
     retractall(skillCDCounter(_)),
     retractall(ultCDCounter(_)),
     asserta(skillCDCounter(2)),
-    asserta(ultCDCounter(3)),
+    asserta(ultCDCounter(3)), nl,nl,
+    attack,
 	!.
 %% DRAGON
 setEnemy(X) :-
@@ -802,7 +823,8 @@ setEnemy(X) :-
     retractall(skillCDCounter(_)),
     retractall(ultCDCounter(_)),
     asserta(skillCDCounter(2)),
-    asserta(ultCDCounter(3)),
+    asserta(ultCDCounter(3)), nl, nl,
+    attack,
 	!.
 
 %% MENEMUKAN ENEMY di WOLF AREA
@@ -895,6 +917,13 @@ teleport(X, Y) :-
 	map,
 	!.
 
+bukaStore(X,Y) :-
+    pos(store, X, Y),
+    store,!.
+
+bukaQuest(X,Y) :-
+    pos(quest,X,Y),
+    questto,!.
 
 
 %% Movement
@@ -909,9 +938,12 @@ w :-
 	notWall(X1, Y1),
 	move(X1, Y1),
 
+    \+bukaStore(X1,Y1),
 	\+teleport(X1, Y1),
 	\+boosPos(X1, Y1),
-	randomEnemy(0), !.
+    \+bukaQuest(X1,Y1),
+	randomEnemy(0), 
+    !.
 
 s :- 
 	started(true),
@@ -922,9 +954,12 @@ s :-
 	notWall(X1, Y1),
 	move(X1, Y1),
 
+    \+bukaStore(X1,Y1),
 	\+teleport(X1, Y1),
 	\+boosPos(X1, Y1),
-	randomEnemy(1), !.
+    \+bukaQuest(X1,Y1),
+	randomEnemy(1), 
+    !.
 
 a :- 
 	started(true),
@@ -934,10 +969,13 @@ a :-
 	Y1 is Y + 0,
 	notWall(X1, Y1),
 	move(X1, Y1),
-	
+
+    
+    \+bukaStore(X1,Y1),
 	\+teleport(X1, Y1),
 	\+boosPos(X1, Y1),
-	randomEnemy(2), !.
+    \+bukaQuest(X1,Y1),
+	randomEnemy(2),!. 
 
 d :- 
 	started(true),
@@ -947,11 +985,14 @@ d :-
 	Y1 is Y + 0,
 	notWall(X1, Y1),
 	move(X1, Y1),
-	
+
+
+    \+bukaStore(X1,Y1), 
 	\+teleport(X1, Y1),
 	\+boosPos(X1, Y1),
-	randomEnemy(3), !.
-
+    \+bukaQuest(X1,Y1),
+	randomEnemy(3),
+    !.
 
 % ENEMY STATS
 %% ==============================================================
@@ -1350,9 +1391,13 @@ attackOption(5,_,_,_) :-
 attackOption(6,0,_,_) :-
     random(1,5,N),
     (
-    N = 1 -> !, wr('Gagal Melarikan Diri!!');
+    N = 1 -> !,nl, wr('Gagal Melarikan Diri!!'),nl;
     N > 1 -> !, wr('Anda Telah Melarikan Diri'), !, run, fail
     ),!.
+
+attackOption(_,_,_,_) :-
+    wr('Input salah'), nl, attack,!.
+
 
 fungsiHeal(Gain, Regen) :-
     finalSTATS(_,_,_,MAXHP),
@@ -1381,7 +1426,6 @@ fungsiCritikal(DMGDEALT,FINALDAMAGE) :-
 pengecekanEnemyHP(DMGDEALT) :-
     enemyCurrentHP(EnemyHP),
     NewEnemyHP is (EnemyHP - DMGDEALT),
-
     monsterEXPGOLD(XP1, GOLD1),
     ekspi(XP),
     gold(GOLD),
@@ -1392,9 +1436,18 @@ pengecekanEnemyHP(DMGDEALT) :-
     Low is ATK - (10*(1.05)**LVL),
     High is ATK + (10*(1.05)**LVL),
     random(Low, High, EnemyDMG),
+    enemy(MONSTER),
+    questFunc(X,Y,Z),
     (
-        NewEnemyHP =< 0 -> !, NewGold is GOLD + GOLD1, NewXP is XP + XP1, retractall(ekspi(_)), retractall(gold(_)), asserta(gold(NewGold)), asserta(ekspi(NewXP)), level(NewLevel), fungsiRefreshDarah(OldLevel, NewLevel), retractall(enemyCurrentHP(_)), wr('Musuh telah mati,'), write('Anda Mendapatkan '), write(GOLD1), write(' Gold & '), write(XP1), wr('EXP!'),setNotInBattle(1), fail;
-        NewEnemyHP > 0 -> !, retractall(enemyCurrentHP(_)), asserta(enemyCurrentHP(NewEnemyHP)), kenaSerangBro(EnemyDMG)
+        NewEnemyHP =<0, enemy(dragon) -> !, asserta(isDragonDead(true)), wr('Anda telah mengalahkan NAGA!'),wr('.'),wr('.'),wr('.'),wr('Ketik apa saja untuk melanjutkan...'), write('>> '),read(_),wr('Anda mendekati naga itu...'),write('>> '),
+        read(_),wr('"Kemarilah bocah...." sang naga berbicara'),write('>> '),read(_),wr('Kalahkan dewi itu, atau...'), write('>> '), read(_), wr('Uhhuk-uhhuk-uhhuk...'), write('>> '),read(_),wr('atau kau akan ................'),nl,nl,nl,wr('COMING "VERY" SOON, GENSHIN SEKAI II Forgotten God'),wr('~Fin'), asserta(isDragonDead(true)),fail;
+        NewEnemyHP =< 0 -> !, NewGold is GOLD + GOLD1, NewXP is XP + XP1, retractall(ekspi(_)), retractall(gold(_)), asserta(gold(NewGold)), asserta(ekspi(NewXP)), level(NewLevel), fungsiRefreshDarah(OldLevel, NewLevel), retractall(enemyCurrentHP(_)), wr('Musuh telah mati,'), write('Anda Mendapatkan '), write(GOLD1), write(' Gold & '), write(XP1), wr('EXP!'),setNotInBattle(1),
+        (
+            MONSTER = goblin -> !, X1 is X-1, retractall(questFunc(_,_,_)), asserta(questFunc(X1,Y,Z));
+            MONSTER = slime -> !, Y1 is Y-1, retractall(questFunc(_,_,_)), asserta(questFunc(X,Y1,Z));
+            MONSTER = wolf -> !, Z1 is Z-1, retractall(questFunc(_,_,_)), asserta(questFunc(X,Y,Z1))
+        ), fail;
+        NewEnemyHP > 0 -> !, retractall(enemyCurrentHP(_)), asserta(enemyCurrentHP(NewEnemyHP)),kenaSerangBro(EnemyDMG)
     ),!.
 
 
@@ -1448,6 +1501,103 @@ status:-
     write('ATK      : '), write(ATK1), nl,
     write('DEF      : '), write(DEF1), nl,
     write('INT      : '), write(INT1), nl.
+
+%% QUESTO
+%% ==========================================================================================================
+
+questto :-
+    pos(player, 33, 16),
+    questKomplito,
+    questCounter(X),
+    wr('Apakah Anda ingin menerima quest?'), 
+    wr('1. yes'),
+    wr('2. no'),
+    write('>> '),
+    read(Z),
+    questOption(X,Z),!.
+
+
+quest :- 
+    adaQuest(true),
+    questFunc(X,Y,Z), nl, X1 is X, Y1 is Y, Z1 is Z,
+    (
+        X < 0 -> X1 is 0;
+        Y < 0 -> Y1 is 0;
+        Z < 0 -> Z1 is 0;
+        true
+    ),
+    write('>> Membunuh '), write(X1), write(' Goblin, '), write(Y1), write(' Slime, '), write(Z1), write(' Wolf.'),nl,!.
+    
+quest :-
+    level(X),
+    X > 49, nl,
+    \+ isDragonDead(true),
+    wr('>> Membunuh Naga').
+
+
+questOption(1,1) :-
+    retractall(questFunc(_,_,_)),
+    X is 3,
+    Y is 0,
+    Z is 0,
+    asserta(questFunc(X, Y, Z)),
+    nl,
+    wr('Tanpa Issei sadari, ia telah masuk ke ruang terdistori....'),
+    wr('"Hah? Ada apa ini!" "'),
+    wr('*Clap* *Clap* *Clap*'),
+    wr('[Selamat, kamu berhasil menemukanku]'),
+    wr('Issei berbalik badan dan melihat Dewi itu lagi'),
+    wr('[Apa yang kamu inginkan?]'),
+    wr('"Sudah kusebutkan sebelumnya, kuharap kau masih ingat"'),
+    wr('[Ara~ara mochiron desu~]'),
+    wr('[Akan ku kabulkan setelah 3 goblin yang mengganggu itu]'),
+    wr('Anda mendapatkan quest baru: Membunuh 3 goblin'), retractall(adaQuest(_)), asserta(adaQuest(true)), nl,!, true.
+
+questOption(_,1) :-
+    wr('Quest belum tersedia lagi'), !, true.
+
+questOption(_,2) :-
+    wr('Anda menolak menerima quest!'),!, true.
+
+questOption(_,_) :-
+    wr('Input Salah!'), !, questto.
+
+questKomplito :-
+    adaQuest(true),
+    questFunc(Goblin,Slime,Wolf),
+    Goblin =< 0,
+    Slime =< 0,
+    Wolf =< 0,
+    questCounter(X),
+    X1 is X + 1,
+    retractall(questCounter(_)),
+    asserta(questCounter(X1)),
+    level(OldLevel),
+    ekspi(EXP),
+    gold(GOLD),
+    NEWEXP is 1000*X,
+    NEWGOLD is 10000*X,
+    EXP1 is EXP + NEWEXP,
+    GOLD1 is GOLD + NEWGOLD,
+    retractall(ekspi(_)),
+    asserta(ekspi(EXP1)),
+    level(NewLevel),
+    fungsiRefreshDarah(OldLevel,NewLevel),
+    retractall(gold(_)),
+    asserta(gold(GOLD1)),
+    retractall(adaQuest(_)), nl,
+    wr('QUEST SELESAI!!'),
+    write('Anda mendapatkan: '), write(NEWEXP), write(' XP dan '),write(NEWGOLD), wr(' Gold'),
+    !.
+
+questKomplito :-
+    adaQuest(true),
+    wr('Anda belum menyelesaikan quest sebelumnya!'),nl,nl,!,fail.
+
+questKomplito :-
+    true.
+
+
 
 %% Rule Tambahan
 %% ==========================================================================================================
