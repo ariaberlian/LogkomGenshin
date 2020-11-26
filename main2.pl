@@ -3,6 +3,7 @@
 :- dynamic(notInBattle/1).
 :- dynamic(enemy/1).
 :- dynamic(bag/1).
+:- dynamic(countBag/1).
 
 :- dynamic(enemy/1).
 :- dynamic(enemyLevel/1).
@@ -36,6 +37,7 @@
 %% ==============================================================
 started(false).
 notInBattle(true).
+
 
 enemy(null).
 
@@ -229,6 +231,7 @@ start :-
     asserta(adaQuest(false)),
     asserta(jobFound(false)),
     % EQUIPMENT & BAG
+    asserta(countBag(10)),
     asserta(bag(['Baseball Bat', 'Uniqlo Tshirt', 'Baseball Helmet', 'Sendal Swallow', 'Ali Ring','Health Potion Small','Health Potion Small','Health Potion Small','Health Potion Small','Health Potion Small'])),
     asserta(equipedWeap('Baseball Bat', 'atk', '+', 1)),
     asserta(equipedArmor('Uniqlo Tshirt', 'hp', '+', 0)),
@@ -401,6 +404,21 @@ map :-
 
 %% INVENTORY
 %% ==============================================================
+
+incCountBag :-
+    countBag(X),
+    X1 is X + 1,
+    retract(countBag(_)),
+    asserta(countBag(X1)).
+
+decCountBag :-
+    countBag(X),
+    X1 is X - 1,
+    retract(countBag(_)),
+    asserta(countBag(X1)).
+
+
+
 concat([],L2,L2).
 concat([H|T], L2, [H|L3]):-concat(T,L2,L3).
 
@@ -437,7 +455,12 @@ readBag(L1, [X|Xs]) :-
 inventory :- 
     gold(M),
     write('Jumlah Gold Anda: '),write(M),nl,
-    write('Isi tas anda adalah: '),nl,
+    countBag(Count),
+    write('Isi tas ('),
+    write(Count),
+    write('/'),
+    write('100) '),
+    write('anda adalah : '),nl,
     bag(B),
     dupRem(B,C),
     readBag(B,C),!,
@@ -457,6 +480,9 @@ inventOption(1) :-
     (
         Input = kembali ->!,nl, inventory;
         \+ member(Input, B)-> !,write('Item yang anda masukan tidak ada dalam inventory.'),nl,nl, inventOption(1); 
+        countBag(X),
+        X > 0,
+        decCountBag,
         write('Anda membuang '), write(Input),nl,throw(Input, B, Res),retract(bag(_)),asserta(bag(Res))
     ).
 
@@ -520,7 +546,8 @@ usePot(Name, Stat, StatNum) :-
         (Stat = 'atk' -> retract(equipedPOT(_)), asserta(equipedPOT(atk)) ; true),
         (Stat = 'def' -> retract(equipedPOT(_)), asserta(equipedPOT(def)) ; true),
         (Stat = 'int' -> retract(equipedPOT(_)), asserta(equipedPOT(int)) ; true)
-    ),!.
+    ),
+    decCountBag,!.
 
 
 
@@ -566,6 +593,9 @@ storeOpt(1) :-
     gacha(Eq, Grade, N, N1),
     retractall(gold(_)),
     asserta(gold(SisaUang)),
+    countBag(X),
+    X < 100,
+    incCountBag,
     write('Anda telah membeli Pandora Box.'),nl,
     write('Membuka Pandora Box....'),nl,
     write('Anda mendapatkan: '),write(Eq),write(' dengan tingkat kelangkaan '),write(Grade),
@@ -611,6 +641,9 @@ buyPot(1) :-
     jajan(M, 50, SisaUang),
     retract(gold(_)),
     asserta(gold(SisaUang)),
+    countBag(X),
+    X < 100,
+    incCountBag,
     write('Anda telah membeli Health Potion Small.'),nl,
     write('Potion dimasukkan ke dalam inventory'),nl,
     bag(Y),
@@ -624,6 +657,9 @@ buyPot(2) :-
     jajan(M, 100, SisaUang),
     retract(gold(_)),
     asserta(gold(SisaUang)),
+    countBag(X),
+    X < 100,
+    incCountBag,
     write('Anda telah membeli Health Potion Medium.'),nl,
     write('Potion dimasukkan ke dalam inventory'),nl,
     bag(Y),
@@ -637,6 +673,9 @@ buyPot(3) :-
     jajan(M, 200, SisaUang),
     retract(gold(_)),
     asserta(gold(SisaUang)),
+    countBag(X),
+    X < 100,
+    incCountBag,
     write('Anda telah membeli Health Potion Large.'),nl,
     write('Potion dimasukkan ke dalam inventory'),nl,
     bag(Y),
@@ -650,6 +689,9 @@ buyPot(4) :-
     jajan(M, 200, SisaUang),
     retract(gold(_)),
     asserta(gold(SisaUang)),
+    countBag(X),
+    X < 100,
+    incCountBag,
     write('Anda telah membeli Rage Potion.'),nl,
     write('Potion dimasukkan ke dalam inventory'),nl,
     bag(Y),
@@ -663,6 +705,9 @@ buyPot(5) :-
     jajan(M, 200, SisaUang),
     retract(gold(_)),
     asserta(gold(SisaUang)),
+    countBag(X),
+    X < 100,
+    incCountBag,
     write('Anda telah membeli Smart Potion.'),nl,
     write('Potion dimasukkan ke dalam inventory'),nl,
     bag(Y),
@@ -676,6 +721,9 @@ buyPot(6) :-
     jajan(M, 200, SisaUang),
     retract(gold(_)),
     asserta(gold(SisaUang)),
+    countBag(X),
+    X < 100,
+    incCountBag,
     write('Anda telah membeli Rock Potion.'),nl,
     write('Potion dimasukkan ke dalam inventory'),nl,
     bag(Y),
@@ -2037,6 +2085,11 @@ save :-
     write(Stream, W6),
     write(Stream, ')),\n'),
 
+    countBag(Count),
+    write(Stream, 'asserta(countBag('),
+    write(Stream, Count),
+    write(Stream, ')),\n'),
+
     write(Stream, 'asserta(bag(['),
     bag([H|T]),
     write(Stream, '\''),
@@ -2060,6 +2113,7 @@ load :-
     retractall(adaQuest(_)),
     retractall(questFunc(_,_,_)),
     retractall(jobFound(_)),
+    retractall(countBag(_)),
     retractall(bag(_)),
     retractall(equipedWeap(_,_,_,_)),
     retractall(equipedArmor(_,_,_,_)),
@@ -2069,9 +2123,14 @@ load :-
 
     wr('Loading Data ...'),
     loadstart,
+<<<<<<< HEAD
     wr('Game succefully loaded'),nl,
     wr('This is the isekai map:'),
     map,nl.
+=======
+    wr('Game succefully loaded'),nl,
+    map.
+>>>>>>> e10ad90f515aea91f5dc989152499e7ff16532c3
 
 tulisBag([]).
 tulisBag([H|T]) :-
