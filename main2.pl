@@ -798,7 +798,6 @@ setEnemy(X) :-
 setEnemy(X) :-
 	X = 3,
 	write('Is it the final battle??!!!'), nl,
-    setNotInBattle(0),
     gambar(naga), nl,
     retractall(enemyLevel(_)),
     asserta(enemyLevel(50)),
@@ -1225,7 +1224,7 @@ attack :-
     skillCDCounter(SkillCD),
     ultCDCounter(ULTCD),
     monsterSTAT(_, MAXHP),
-    write(Monster), write(' '), write(' evel: '), write(LVL), nl,
+    write(Monster), write(' '), write(' level: '), write(LVL), nl,
     write('Darah Monster: '), write(EnemyHP), write('/'), write(MAXHP), nl,
     wr('1. Normal attack'),
     wr('2. Use Skill'),
@@ -1426,7 +1425,7 @@ pengecekanEnemyHP(DMGDEALT) :-
     enemy(MONSTER),
     questFunc(X,Y,Z),
     (
-        NewEnemyHP =<0, enemy(dragon) -> !, asserta(isDragonDead(true)), wr('Anda telah mengalahkan NAGA!'),wr('.'),wr('.'),wr('.'),wr('Ketik apa saja untuk melanjutkan...'), write('>> '),read(_),wr('Anda mendekati naga itu...'),nl,nl,wr('"Kemarilah bocah...." sang naga berbicara'),nl,wr('Kalahkan dewi itu, atau...'), nl, wr('Uhhuk-uhhuk-uhhuk...'),nl,wr('atau kau akan ................'),nl,nl,nl,wr('COMING "VERY" SOON, GENSHIN SEKAI II Forgotten God'),wr('~Fin'), asserta(isDragonDead(true)),fail;
+        NewEnemyHP =<0, enemy(dragon) -> !, asserta(isDragonDead(true)), wr('Anda telah mengalahkan NAGA!'),wr('.'),wr('.'),wr('.'),wr('Ketik apa saja untuk melanjutkan...'), write('>> '),read(_),wr('Anda mendekati naga itu...'),nl,nl,wr('"Kemarilah bocah...." sang naga berbicara'),nl,wr('Kalahkan dewi itu, atau...'), nl, wr('Uhhuk-uhhuk-uhhuk...'),nl,wr('atau kau akan ................'),nl,nl,nl,wr('COMING "VERY" SOON, GENSHIN SEKAI II Forgotten God'),wr('~Fin'), asserta(isDragonDead(true));
         NewEnemyHP =< 0 -> !, NewGold is GOLD + GOLD1, NewXP is XP + XP1, retractall(ekspi(_)), retractall(gold(_)), asserta(gold(NewGold)), asserta(ekspi(NewXP)), level(NewLevel), fungsiRefreshDarah(OldLevel, NewLevel), retractall(enemyCurrentHP(_)), wr('Musuh telah mati,'), write('Anda Mendapatkan '), write(GOLD1), write(' Gold & '), write(XP1), wr('EXP!'),setNotInBattle(1),
         (
             MONSTER = goblin -> !, X1 is X-1, retractall(questFunc(_,_,_)), asserta(questFunc(X1,Y,Z));
@@ -1446,7 +1445,8 @@ kenaSerangBro(DMGDEALT) :-
     enemy(ENEMY),
     DMGTAKEN2 is round(DMGTAKEN + 0.0001),
     (
-        NewHP =< 0 -> !, retractall(currentHP(_)), asserta(currentHP(0)), retractall(gold(_)), asserta(gold(0)), wr('Anda Telah Mati'), wr('"Kemampuanmu hanya seginikah, aku menyesal membawamu kemari."'), wr('"Bocah lemah sepertinya tidak cocok untuk menggapai harapanku."'), retractall(notInBattle(_)), setNotInBattle(1), retractall(started(_)), asserta(started(false)),fail;
+        NewHP =< 0 -> !, retractall(currentHP(_)), asserta(currentHP(0)), retractall(gold(_)), asserta(gold(0)), write(ENEMY), wr(' menyerang!!!'), write('Anda terkena '), write(DMGTAKEN2),
+        wr(' damage!'),wr('Anda Telah Mati'), wr('"Kemampuanmu hanya seginikah, aku menyesal membawamu kemari."'), wr('"Bocah lemah sepertinya tidak cocok untuk menggapai harapanku."'), retractall(notInBattle(_)), setNotInBattle(1), retractall(started(_)), asserta(started(false)),fail;
         NewHP > 0 -> !, retractall(currentHP(_)), asserta(currentHP(NewHP)), write(ENEMY), wr(' menyerang!!!'), write('Anda terkena '), write(DMGTAKEN2),
         wr(' damage!'), nl,pengecekanCD,attack
     ),!.
