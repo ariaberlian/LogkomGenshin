@@ -477,6 +477,8 @@ inventOption(X):-
     X > 2,
     !,fail.
 
+
+
 useEquip(Name, Jenis, Stat, StatType, StatNum, Job) :- 
     (
         (Jenis = 'Single-Handed Sword'; Jenis = 'Greatsword'), job(Job), Job = swordsman -> retractall(equipedWeap(_,_,_,_)),asserta(equipedWeap(Name, Stat, StatType, StatNum));
@@ -819,10 +821,9 @@ setEnemy(X) :-
 %% MENEMUKAN ENEMY di WOLF AREA
 foundEnemy(X, _) :-
 	X < 2,
-	inWolfArea,
+	inWolfArea,!,
 	setNotInBattle(0),
-	setEnemy(0),
-	!.
+	setEnemy(0).
 	
 %% MENEMUKAN ENEMY
 foundEnemy(X, _) :-
@@ -1005,19 +1006,19 @@ monsterEXPGOLD(30000, 1500000) :-
 monsterSTAT(ATK, HP) :-
     enemyLevel(LVL),
     ATK is round(250*1.1**(LVL) + 0.00001),
-    HP is round(250*1.1**(LVL) + 0.00001),
+    HP is round(250*1.105**(LVL) + 0.00001),
     enemy(goblin),!.
     
 monsterSTAT(ATK, HP) :-
     enemyLevel(LVL),
     ATK is round(200*1.1**(LVL) + 0.00001),
-    HP is round(200*1.1**(LVL) + 0.00001),
+    HP is round(200*1.105**(LVL) + 0.00001),
     enemy(slime),!.
 
 monsterSTAT(ATK, HP) :-
     enemyLevel(LVL),
     ATK is round(300*1.1**(LVL) + 0.00001),
-    HP is round(300*1.1**(LVL) + 0.00001),
+    HP is round(300*1.105**(LVL) + 0.00001),
     enemy(wolf),!.
 
 monsterSTAT(40000, 700000) :-
@@ -2047,6 +2048,7 @@ save :-
     wr('GAME SUCCESFULLY SAVED').
 
 load :-
+    consult('saveData.pl'),
     retractall(started(_)),
     retract(pos(player,_,_)),
     retractall(job(_)),
@@ -2065,7 +2067,6 @@ load :-
     retractall(equipedBoots(_,_,_,_)),
     retractall(equipedAcc(_,_,_,_)),
 
- 	consult('saveData.pl'),
     wr('Loading Data ...'),
     loadstart,
     wr('Game succefully loaded').
