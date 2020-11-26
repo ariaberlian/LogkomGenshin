@@ -1030,37 +1030,37 @@ monsterSTAT(40000, 700000) :-
 baseSTAT(ATK, DEF, INT, HP) :-
     level(LVL),
     job(swordsman),
-    ATK is 100*(1.1**(LVL-1)),
+    ATK is 200*(1.1**(LVL-1)),
     DEF is 300*(1.1**(LVL-1)),
-    INT is 50*(1.1**(LVL-1)),
+    INT is 200*(1.1**(LVL-1)),
     HP is 2000*(1.1**(LVL-1)),!.
     
 
 baseSTAT(ATK, DEF, INT, HP) :-
     level(LVL),
     job(archer),
-    ATK is 150*(1.1**(LVL-1)),
+    ATK is 300*(1.1**(LVL-1)),
     DEF is 100*(1.1**(LVL-1)),
-    INT is 50*(1.1**(LVL-1)),
+    INT is 200*(1.1**(LVL-1)),
     HP is 1500*(1.1**(LVL-1)),!.
 
 baseSTAT(ATK, DEF, INT, HP) :-
     level(LVL),
     job(wizard),
-    ATK is 50*(1.1**(LVL-1)),
+    ATK is 100*(1.1**(LVL-1)),
     DEF is 120*(1.1**(LVL-1)),
-    INT is 150*(1.1**(LVL-1)),
+    INT is 300*(1.1**(LVL-1)),
     HP is 1700*(1.1**(LVL-1)),!.
 
 baseSTAT(ATK, DEF, INT, HP) :-
     level(LVL),
     job(priest),
-    ATK is 80*(1.1**(LVL-1)),
+    ATK is 160*(1.1**(LVL-1)),
     DEF is 150*(1.1**(LVL-1)),
-    INT is 150*(1.1**(LVL-1)),
+    INT is 300*(1.1**(LVL-1)),
     HP is 2200*(1.1**(LVL-1)),!.
 
-baseSTAT(100, 100, 170, 2000) :-
+baseSTAT(250, 100, 340, 2000) :-
     job(programmer),!.
 
 baseSTAT(9999, 9999, 9999, 999999) :-
@@ -1227,7 +1227,7 @@ attack :-
     skillCDCounter(SkillCD),
     ultCDCounter(ULTCD),
     monsterSTAT(_, MAXHP),
-    write(Monster), write(' '), write(' Level: '), write(LVL), nl,
+    write(Monster), write(' '), write(' evel: '), write(LVL), nl,
     write('Darah Monster: '), write(EnemyHP), write('/'), write(MAXHP), nl,
     wr('1. Normal attack'),
     wr('2. Use Skill'),
@@ -1449,7 +1449,7 @@ kenaSerangBro(DMGDEALT) :-
     enemy(ENEMY),
     DMGTAKEN2 is round(DMGTAKEN + 0.0001),
     (
-        NewHP =< 0 -> !, retractall(currentHP(_)), asserta(currentHP(0)), retractall(gold(_)), asserta(gold(0)), wr('Anda Telah Mati'), wr('"Kemampuanmu hanya seginikah, aku menyesal membawamu kemari."'), wr('"Bocah lemah sepertinya tidak cocok untuk menggapai harapanku."'), retractall(notInBattle(_)), setNotInBattle(1), fail;
+        NewHP =< 0 -> !, retractall(currentHP(_)), asserta(currentHP(0)), retractall(gold(_)), asserta(gold(0)), wr('Anda Telah Mati'), wr('"Kemampuanmu hanya seginikah, aku menyesal membawamu kemari."'), wr('"Bocah lemah sepertinya tidak cocok untuk menggapai harapanku."'), retractall(notInBattle(_)), setNotInBattle(1), retractall(started(_)), asserta(started(false)),fail;
         NewHP > 0 -> !, retractall(currentHP(_)), asserta(currentHP(NewHP)), write(ENEMY), wr(' menyerang!!!'), write('Anda terkena '), write(DMGTAKEN2),
         wr(' damage!'), nl,pengecekanCD,attack
     ),!.
