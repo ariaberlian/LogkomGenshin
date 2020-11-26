@@ -1227,7 +1227,7 @@ attack :-
     skillCDCounter(SkillCD),
     ultCDCounter(ULTCD),
     monsterSTAT(_, MAXHP),
-    write(Monster), write(' '), write(' level: '), write(LVL), nl,
+    write(Monster), write(' level: '), write(LVL), nl,
     write('Darah Monster: '), write(EnemyHP), write('/'), write(MAXHP), nl,
     wr('1. Normal attack'),
     wr('2. Use Skill'),
@@ -1369,7 +1369,7 @@ attackOption(3,DMGDEALT,_,ULTCD) :-
     !.
 attackOption(3,_,_,ULTCD) :-
     ULTCD > 0,
-    wr('Burst dalam Cooldown'), !, attack, fail.
+    wr('Burst dalam Cooldown'), nl,!, attack, fail.
 
 attackOption(4,_,_,_) :-
     usepotion,nl, nl, attack,!.
@@ -1385,7 +1385,7 @@ attackOption(6,0,_,_) :-
     ),!.
 
 attackOption(_,_,_,_) :-
-    wr('Input salah'), nl, attack,!.
+    !,wr('Input salah'), nl, attack.
 
 
 fungsiHeal(Gain, Regen) :-
@@ -2069,7 +2069,9 @@ load :-
 
     wr('Loading Data ...'),
     loadstart,
-    wr('Game succefully loaded').
+    wr('Game succefully loaded'),nl,
+    wr('This is the isekai map:'),
+    map,nl.
 
 tulisBag([]).
 tulisBag([H|T]) :-
