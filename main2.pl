@@ -407,21 +407,6 @@ concat([H|T], L2, [H|L3]):-concat(T,L2,L3).
 
 push(Element,Queue,Result):- concat(Queue,[Element],Result).
 
-% firstOut([_|T],T).
-% pop(Queue,Result):-firstOut(Queue,Result).
-
-% front([H|_],H).
-% back([H],H).
-% back([_|T],Result):-back(T,Result).
-
-% list_length([]     , 0 ).
-% list_length([_|T] , N ) :- list_length(T,N1) , N is N1+1.
-
-% lastOut([H|T], Result):-lastOutprev(T, Result, H).            
-% lastOutprev([], [], _).
-% lastOutprev([H1|T1], [H0|T0], H0):-lastOutprev(T1, T0, H1). 
-% Ini ga kepake perasaan
-
 count(_, [], 0).
 count(X, [H|T], Result) :- X \= H, count(X, T, Result).
 count(X, [H|T], Result) :- X = H, count(X, T, Res1), Result is Res1 + 1.
@@ -735,19 +720,19 @@ setNotInBattle(X) :-
 
 writeArah(M) :-
 	M = 0,
-	write('North'),
+	write('Issei begerak ke utara'),
 	!.
 writeArah(M) :-
 	M = 1,
-	write('South'),
+	write('Issei bergerak ke selatan'),
 	!.
 writeArah(M) :-
 	M = 2,
-	write('West'),
+	write('Issei bergerak ke barat'),
 	!.
 writeArah(M) :-
 	M = 3,
-	write('East'),
+	write('Issei bergerak ke timur'),
 	!.
 
 %% WOLF
@@ -1046,7 +1031,7 @@ baseSTAT(ATK, DEF, INT, HP) :-
     level(LVL),
     job(swordsman),
     ATK is 100*(1.1**(LVL-1)),
-    DEF is 350*(1.1**(LVL-1)),
+    DEF is 300*(1.1**(LVL-1)),
     INT is 50*(1.1**(LVL-1)),
     HP is 2000*(1.1**(LVL-1)),!.
     
@@ -1459,7 +1444,7 @@ kenaSerangBro(DMGDEALT) :-
     currentHP(HP),
     % PENGURANGAN DMGDEALT DENGAN DEF
     finalSTATS(_,DEF,_,_),
-    DMGTAKEN is DMGDEALT - (DEF/5),
+    DMGTAKEN is DMGDEALT - (DEF/4),
     NewHP is HP - DMGTAKEN,
     enemy(ENEMY),
     DMGTAKEN2 is round(DMGTAKEN + 0.0001),
@@ -1548,7 +1533,7 @@ questOption(1,1) :-
     asserta(questFunc(X, Y, Z)),
     nl,
     wr('Tanpa Issei sadari, ia telah masuk ke ruang terdistori....'),
-    wr('"Hah? Ada apa ini!" "'),
+    wr('"Hah? Ada apa ini!"'),
     wr('*Clap* *Clap* *Clap*'),
     wr('[Selamat, kamu berhasil menemukanku]'),
     wr('Issei berbalik badan dan melihat Dewi itu lagi'),
@@ -1562,39 +1547,81 @@ questOption(1,1) :-
 questOption(2,1) :-
     retractall(questFunc(_,_,_)),
     X is 3,
-    Y is 0,
-    Z is 0,
+    Y is 3,
+    Z is 3,
     asserta(questFunc(X, Y, Z)),
     nl,
-    wr('Tanpa Issei sadari, ia telah masuk ke ruang terdistori....'),
-    wr('"Hah? Ada apa ini!" "'),
-    wr('*Clap* *Clap* *Clap*'),
-    wr('[Selamat, kamu berhasil menemukanku]'),
-    wr('Issei berbalik badan dan melihat Dewi itu lagi'),
-    wr('[Apa yang kamu inginkan?]'),
-    wr('"Sudah kusebutkan sebelumnya, kuharap kau masih ingat"'),
-    wr('[Ara~ara mochiron desu~]'),
-    wr('[Akan ku kabulkan setelah 3 goblin yang mengganggu itu]'),
-    wr('Anda mendapatkan quest baru: Membunuh 3 goblin'), 
+    wr('Telah masuk ke ruang terdistori....'),
+    wr('"Aku sudah selesai"'),
+    wr('[Oh]'),
+    wr('"Bagaimana dengan permintaanku?"'),
+    wr('[Kau lihat bagaimana slime slime itu bergerak? Mereka sungguh menjijikan.]'),
+    wr('Belum lagi anjing-anjing bodoh yang selalu berteriak di malam hari, sungguh menyebalkan!'),
+    wr('Hey, ingat goblin yang kemarin kau bunuh? Sepertinya kakak dan teman-temannya ingin balas dendam. Singkirkan mereka semua]'),
+    wr('"Haa baiklah baiklah akan kulakukan.."'),
+    wr('Anda mendapatkan quest baru: Membunuh 3 goblin, 3 wolf dan 3 slime'), 
     retractall(adaQuest(_)), asserta(adaQuest(true)), nl,!, true.
 
 questOption(3,1) :-
     retractall(questFunc(_,_,_)),
-    X is 3,
+    X is 5,
+    Y is 0,
+    Z is 6,
+    asserta(questFunc(X, Y, Z)),
+    nl,
+    wr('Memasuki Portal Dimensi lain....'),
+    wr('[Selamat, kau telah menyelesaikan misi kedua]'),
+    wr('*Clap* *Clap* *Clap*'),
+    wr('[Sekarang kau akan menghadapi tahap selanjutnya.]'),
+    wr('"APA ITU?!!!"'),
+    wr('[Kau akan menghadapi banyak cobaan]'),
+    wr('"What?!!, Cobaan apaa?!!"'),
+    wr('[Dragon sudah terbangun dari tidur panjangnyaa]'),
+    wr('[Dia akan menghancurkan dunia ini. Hanya kau yang dapat mengalahkannya]'),
+    wr('[Tapi sebelum itu, tolong carikan aku 5 ekor goblin dan 6 ekor srigala.]'),
+    wr('"Buat Apa itu semua?"'),
+    wr('[Nanti kau akan tau pada saatnya]'),
+    wr('Mengirim Issei kembali ke Isekai....'),
+    wr('"AAARRGHH!!!"'),
+    wr('Anda mendapatkan quest : Membunuh 5 Goblin, dan 6 wolf'), 
+    retractall(adaQuest(_)), asserta(adaQuest(true)), nl,!, true.
+
+questOption(4,1) :-
+    retractall(questFunc(_,_,_)),
+    X is 15,
     Y is 0,
     Z is 0,
     asserta(questFunc(X, Y, Z)),
     nl,
-    wr('Tanpa Issei sadari, ia telah masuk ke ruang terdistori....'),
-    wr('"Hah? Ada apa ini!" "'),
-    wr('*Clap* *Clap* *Clap*'),
-    wr('[Selamat, kamu berhasil menemukanku]'),
-    wr('Issei berbalik badan dan melihat Dewi itu lagi'),
-    wr('[Apa yang kamu inginkan?]'),
-    wr('"Sudah kusebutkan sebelumnya, kuharap kau masih ingat"'),
-    wr('[Ara~ara mochiron desu~]'),
-    wr('[Akan ku kabulkan setelah 3 goblin yang mengganggu itu]'),
-    wr('Anda mendapatkan quest baru: Membunuh 3 goblin'), 
+    wr('Aku keluaaaar....'),
+    wr('"Aku sudah selesai"'),
+    wr('[Oh]'),
+    wr('"Bagaimana dengan permintaanku?"'),
+    wr('[Oh tidak, kalungku telah dicuri.]'),
+    wr('Huft... apa lagi sekarang -_-#'),
+    wr('Hey, ingat kakak dan teman-teman goblin yang 3 bulan lalu kau bunuh? Sepertinya kakek merekalah yang telah mencurinya.]'),
+    wr('"Haa baiklah baiklah akan kuhabisi mereka.."'),
+    wr('Anda mendapatkan quest baru: Membunuh 15 goblin (saja)'), 
+    retractall(adaQuest(_)), asserta(adaQuest(true)), nl,!, true.
+
+questOption(5,1) :-
+    retractall(questFunc(_,_,_)),
+    X is 5,
+    Y is 5,
+    Z is 10,
+    asserta(questFunc(X, Y, Z)),
+    nl,
+    wr('5 tahun kemudian...'),
+    wr('"Sampai kapan aku harus menunggu?"'),
+    wr('[Oh tidak, kalungku dicuri(lagi)]'),
+    wr('"ノ( º _ ºノ)"'),
+    wr('[Tenang, itu hanya kalung palsu.]'),
+    wr('"（╯°□°）╯︵( .o.)"'),
+    wr('[Baiklah, ini permintaan ku yang terakhir, Habisi 5 goblin, 5 slime, dan 10 wolf.]'),
+    wr('"_-_"'),
+    wr('[Sebagai imbalannya, kamu bebas meminta dan melakukan apapun kepadaku...]'),
+    wr('"Σ(O_O；) (aku benci pikiranku)"'),
+    wr('Anda mendapatkan quest baru (dan terakhir): Membunuh 5 goblin, 10 wolf dan 5 slime'), 
     retractall(adaQuest(_)), asserta(adaQuest(true)), nl,!, true.
 
 
@@ -1656,7 +1683,7 @@ help :-
     write('%                                 Genshin Asik                                    %'), nl,
     write('% 1. start     : untuk memulai petualanganmu                                      %'), nl,
     write('% 2. map       : untuk menampilkan map                                            %'), nl,
-    write('% 3. ascend    : ascencion untu mengganti job anda (Minimal LVL 3)                %'), nl,
+    write('% 3. ascend    : ascencion untuk mengganti job anda (Minimal LVL 3)               %'), nl,
     write('% 4. status    : menampilkan kondisimu terkini                                    %'), nl,
     write('% 5. w         : gerak ke utara 1 langkah                                         %'), nl,
     write('% 6. s         : gerak ke selatan 1 langkah                                       %'), nl,
@@ -1666,7 +1693,8 @@ help :-
     write('% 10.inventory : Membuka tas                                                      %'), nl,
     write('% 11.help      : menampilkan segala bantuan                                       %'), nl,
     write('% 12.save      : menyimpan state game                                             %'), nl,
-    write('% 13.load      : menmuat ulang state game yang terakhir                           %'), nl,
+    write('% 13.load      : memuat ulang state game yang terakhir                            %'), nl,
+    write('% 14.quest     : melihat quest yang sedang berlangsung                            %'), nl,
     write('%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%'), nl,!.
     % nl,
     % nl,
@@ -2056,3 +2084,10 @@ tulisAkhir :-
     open('saveData.pl', append, Stream),
     write(Stream, '])).\n'),
     close(Stream).
+
+% Sumber
+% StackOverFlow
+% Prolog Documentations
+% https://www.youtube.com/watch?v=Sglwxswyo4o&ab_channel=MeenakshiHooda
+% https://youtu.be/SykxWpFwMGs
+% https://www.youtube.com/watch?v=B7HGbMnNX0U
