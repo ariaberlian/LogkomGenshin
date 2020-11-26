@@ -29,6 +29,9 @@
 :- dynamic(adaQuest/1).
 :- dynamic(isDragonDead/1).
 
+
+
+
 %% FACT
 %% ==============================================================
 started(false).
@@ -193,13 +196,6 @@ grade('SS', 'Honda SNI Helmet', 8).
 grade('SS', 'Holly Swallow', 9).
 grade('SS', 'Fiesta SpicyChikenWings', 10).
 
-% Bag and Wallet
-bag(['Baseball Bat', 'Uniqlo Tshirt', 'Baseball Helmet', 'Sendal Swallow', 'Ali Ring','Health Potion Small','Health Potion Small','Health Potion Small','Health Potion Small','Health Potion Small']).
-gold(300).
-
-% Equiped Equipment
-% equipedWeap(Name, Stat, StatType, StatNum)
-
 
 
 %% MAIN MENU
@@ -212,6 +208,7 @@ start :-
 	retract(enemy(_)),
 	retract(notInBattle(_)),
 	retract(started(_)),
+    retractall(jobFound(_)),
     retractall(questFunc(_,_,_)),
     asserta(questFunc(0,0,0)),
     retractall(currentHP(_)),
@@ -231,6 +228,9 @@ start :-
 	asserta(started(true)),
     asserta(questCounter(1)),
     asserta(adaQuest(false)),
+    asserta(jobFound(false)),
+    % EQUIPMENT & BAG
+    asserta(bag(['Baseball Bat', 'Uniqlo Tshirt', 'Baseball Helmet', 'Sendal Swallow', 'Ali Ring','Health Potion Small','Health Potion Small','Health Potion Small','Health Potion Small','Health Potion Small'])),
     asserta(equipedWeap('Baseball Bat', 'atk', '+', 1)),
     asserta(equipedArmor('Uniqlo Tshirt', 'hp', '+', 0)),
     asserta(equipedHead('Baseball Helmet', 'def', '+', 0)),
@@ -1556,7 +1556,47 @@ questOption(1,1) :-
     wr('"Sudah kusebutkan sebelumnya, kuharap kau masih ingat"'),
     wr('[Ara~ara mochiron desu~]'),
     wr('[Akan ku kabulkan setelah 3 goblin yang mengganggu itu]'),
-    wr('Anda mendapatkan quest baru: Membunuh 3 goblin'), retractall(adaQuest(_)), asserta(adaQuest(true)), nl,!, true.
+    wr('Anda mendapatkan quest baru: Membunuh 3 goblin'),
+    retractall(adaQuest(_)), asserta(adaQuest(true)), nl,!, true.
+
+questOption(2,1) :-
+    retractall(questFunc(_,_,_)),
+    X is 3,
+    Y is 0,
+    Z is 0,
+    asserta(questFunc(X, Y, Z)),
+    nl,
+    wr('Tanpa Issei sadari, ia telah masuk ke ruang terdistori....'),
+    wr('"Hah? Ada apa ini!" "'),
+    wr('*Clap* *Clap* *Clap*'),
+    wr('[Selamat, kamu berhasil menemukanku]'),
+    wr('Issei berbalik badan dan melihat Dewi itu lagi'),
+    wr('[Apa yang kamu inginkan?]'),
+    wr('"Sudah kusebutkan sebelumnya, kuharap kau masih ingat"'),
+    wr('[Ara~ara mochiron desu~]'),
+    wr('[Akan ku kabulkan setelah 3 goblin yang mengganggu itu]'),
+    wr('Anda mendapatkan quest baru: Membunuh 3 goblin'), 
+    retractall(adaQuest(_)), asserta(adaQuest(true)), nl,!, true.
+
+questOption(3,1) :-
+    retractall(questFunc(_,_,_)),
+    X is 3,
+    Y is 0,
+    Z is 0,
+    asserta(questFunc(X, Y, Z)),
+    nl,
+    wr('Tanpa Issei sadari, ia telah masuk ke ruang terdistori....'),
+    wr('"Hah? Ada apa ini!" "'),
+    wr('*Clap* *Clap* *Clap*'),
+    wr('[Selamat, kamu berhasil menemukanku]'),
+    wr('Issei berbalik badan dan melihat Dewi itu lagi'),
+    wr('[Apa yang kamu inginkan?]'),
+    wr('"Sudah kusebutkan sebelumnya, kuharap kau masih ingat"'),
+    wr('[Ara~ara mochiron desu~]'),
+    wr('[Akan ku kabulkan setelah 3 goblin yang mengganggu itu]'),
+    wr('Anda mendapatkan quest baru: Membunuh 3 goblin'), 
+    retractall(adaQuest(_)), asserta(adaQuest(true)), nl,!, true.
+
 
 questOption(_,1) :-
     wr('Quest belum tersedia lagi'), !, true.
@@ -1622,9 +1662,11 @@ help :-
     write('% 6. s         : gerak ke selatan 1 langkah                                       %'), nl,
     write('% 7. d         : gerak ke ke timur 1 langkah                                      %'), nl,
     write('% 8. a         : gerak ke barat 1 langkah                                         %'), nl,
-    write('% 9. store     : Membeli barang saat berada di toko   \'S\'                         %'), nl,
+    write('% 9. store     : Membeli barang saat berada di toko \'S\'                           %'), nl,
     write('% 10.inventory : Membuka tas                                                      %'), nl,
-    write('% 10.help      : menampilkan segala bantuan                                       %'), nl,
+    write('% 11.help      : menampilkan segala bantuan                                       %'), nl,
+    write('% 12.save      : menyimpan state game                                             %'), nl,
+    write('% 13.load      : menmuat ulang state game yang terakhir                           %'), nl,
     write('%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%'), nl,!.
     % nl,
     % nl,
@@ -1812,6 +1854,7 @@ gambar(wolf) :-
 
 
 save :-
+    notInBattle(true),
     write('Saving Data ...'),
 	open('saveData.pl', write, Stream),
     write(Stream, 'loadstart :-\n'),
@@ -1819,6 +1862,12 @@ save :-
     started(Started),
     write(Stream, 'asserta(started('),
     write(Stream, Started),
+    write(Stream, ')),\n'),
+
+
+    jobFound(JobFound),
+    write(Stream, 'asserta(jobFound('),
+    write(Stream, JobFound),
     write(Stream, ')),\n'),
 
     pos(player, X, Y),
@@ -1966,7 +2015,8 @@ save :-
     write(Stream, '\''),
  	close(Stream),
     tulisBag(T),
-    tulisAkhir.
+    tulisAkhir, nl,
+    wr('GAME SUCCESFULLY SAVED').
 
 load :-
     retractall(started(_)),
@@ -1979,7 +2029,7 @@ load :-
     retractall(notInBattle(_)),
     retractall(adaQuest(_)),
     retractall(questFunc(_,_,_)),
-
+    retractall(jobFound(_)),
     retractall(bag(_)),
     retractall(equipedWeap(_,_,_,_)),
     retractall(equipedArmor(_,_,_,_)),
