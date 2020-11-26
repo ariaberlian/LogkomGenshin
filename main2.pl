@@ -203,7 +203,6 @@ grade('SS', 'Fiesta SpicyChikenWings', 10).
 
 %% Setelah dicompile, maka user harus melakukan "start." terlebih dahulu
 start :-
-    \+ started(true),
 	retract(pos(player, _, _)),
 	retract(enemy(_)),
 	retract(notInBattle(_)),
@@ -1882,6 +1881,7 @@ gambar(wolf) :-
 
 
 save :-
+    \+ started(true),
     notInBattle(true),
     write('Saving Data ...'),
 	open('saveData.pl', write, Stream),
