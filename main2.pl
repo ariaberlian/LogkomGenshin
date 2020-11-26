@@ -2123,14 +2123,9 @@ load :-
 
     wr('Loading Data ...'),
     loadstart,
-<<<<<<< HEAD
     wr('Game succefully loaded'),nl,
     wr('This is the isekai map:'),
     map,nl.
-=======
-    wr('Game succefully loaded'),nl,
-    map.
->>>>>>> e10ad90f515aea91f5dc989152499e7ff16532c3
 
 tulisBag([]).
 tulisBag([H|T]) :-
