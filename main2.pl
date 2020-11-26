@@ -199,11 +199,6 @@ gold(300).
 
 % Equiped Equipment
 % equipedWeap(Name, Stat, StatType, StatNum)
-equipedWeap('Baseball Bat', 'atk', '+', 1).
-equipedArmor('Uniqlo Tshirt', 'hp', '+', 0).
-equipedHead('Baseball Helmet', 'def', '+', 0).
-equipedBoots('Sendal Swallow', 'hp', '+', 1). 
-equipedAcc('Ali Ring', 'atk', '+', 1). 
 
 
 
@@ -212,6 +207,7 @@ equipedAcc('Ali Ring', 'atk', '+', 1).
 
 %% Setelah dicompile, maka user harus melakukan "start." terlebih dahulu
 start :-
+    \+ started(true),
 	retract(pos(player, _, _)),
 	retract(enemy(_)),
 	retract(notInBattle(_)),
@@ -222,10 +218,11 @@ start :-
     retractall(ekspi(_)),
     retractall(gold(_)),
     retractall(job(_)),
+    retractall(adaQuest(_)),
 
-    asserta(job(god)),
-    asserta(ekspi(900)),
-    asserta(gold(99999999999999)),
+    asserta(job(programmer)),
+    asserta(ekspi(0)),
+    asserta(gold(1000)),
     finalSTATS(_,_,_,HP),
     asserta(currentHP(HP)),
 	asserta(pos(player, 1, 1)),
@@ -233,6 +230,13 @@ start :-
 	asserta(notInBattle(true)),
 	asserta(started(true)),
     asserta(questCounter(1)),
+    asserta(adaQuest(false)),
+    asserta(equipedWeap('Baseball Bat', 'atk', '+', 1)),
+    asserta(equipedArmor('Uniqlo Tshirt', 'hp', '+', 0)),
+    asserta(equipedHead('Baseball Helmet', 'def', '+', 0)),
+    asserta(equipedBoots('Sendal Swallow', 'hp', '+', 1)),
+    asserta(equipedAcc('Ali Ring', 'atk', '+', 1)),
+
 
 	write('Game is Starting...'), nl,
     write('Youkouso'), nl,
@@ -1016,8 +1020,8 @@ monsterEXPGOLD(30000, 1500000) :-
 
 monsterSTAT(ATK, HP) :-
     enemyLevel(LVL),
-    ATK is round(300*1.1**(LVL) + 0.00001),
-    HP is round(400*1.1**(LVL) + 0.00001),
+    ATK is round(250*1.1**(LVL) + 0.00001),
+    HP is round(250*1.1**(LVL) + 0.00001),
     enemy(goblin),!.
     
 monsterSTAT(ATK, HP) :-
@@ -1028,11 +1032,11 @@ monsterSTAT(ATK, HP) :-
 
 monsterSTAT(ATK, HP) :-
     enemyLevel(LVL),
-    ATK is round(400*1.1**(LVL) + 0.00001),
-    HP is round(400*1.1**(LVL) + 0.00001),
+    ATK is round(300*1.1**(LVL) + 0.00001),
+    HP is round(300*1.1**(LVL) + 0.00001),
     enemy(wolf),!.
 
-monsterSTAT(60000, 1500000) :-
+monsterSTAT(40000, 700000) :-
     enemy(dragon),!.
 
 
@@ -1586,7 +1590,8 @@ questKomplito :-
     fungsiRefreshDarah(OldLevel,NewLevel),
     retractall(gold(_)),
     asserta(gold(GOLD1)),
-    retractall(adaQuest(_)), nl,
+    retractall(adaQuest(_)),
+    asserta(adaQuest(false)), nl,
     wr('QUEST SELESAI!!'),
     write('Anda mendapatkan: '), write(NEWEXP), write(' XP dan '),write(NEWGOLD), wr(' Gold'),
     !.
@@ -1803,3 +1808,201 @@ gambar(wolf) :-
     wr('           ./+osy:::::-/oo/://:::::+:::o+/s/+.`   '),
     wr('          .-:////////::/+/-----....````````       '),
     wr('                     ```                          '),!.
+
+
+
+save :-
+    write('Saving Data ...'),
+	open('saveData.pl', write, Stream),
+    write(Stream, 'loadstart :-\n'),
+
+    started(Started),
+    write(Stream, 'asserta(started('),
+    write(Stream, Started),
+    write(Stream, ')),\n'),
+
+    pos(player, X, Y),
+    write(Stream, 'asserta(pos(player,'),
+    write(Stream, X),
+    write(Stream, ','),
+    write(Stream, Y),
+    write(Stream, ')),\n'),
+
+    job(A),
+    write(Stream, 'asserta(job('),
+    write(Stream, A),
+    write(Stream, ')),\n'),
+
+    ekspi(B),
+    write(Stream, 'asserta(ekspi('),
+    write(Stream, B),
+    write(Stream, ')),\n'),
+
+    gold(C),
+    write(Stream, 'asserta(gold('),
+    write(Stream, C),
+    write(Stream, ')),\n'),
+
+    currentHP(D),
+    write(Stream, 'asserta(currentHP('),
+    write(Stream, D),
+    write(Stream, ')),\n'),
+
+    questCounter(E),
+    write(Stream, 'asserta(questCounter('),
+    write(Stream, E),
+    write(Stream, ')),\n'),
+
+    notInBattle(F),
+    write(Stream, 'asserta(notInBattle('),
+    write(Stream, F),
+    write(Stream, ')),\n'),
+
+    adaQuest(Questttt),
+    write(Stream, 'asserta(adaQuest('),
+    write(Stream, Questttt),
+    write(Stream, ')),\n'),
+
+
+    questFunc(X1, Y1, Z1),
+    write(Stream, 'asserta(questFunc('),
+    write(Stream, X1),
+    write(Stream, ','),
+    write(Stream, Y1),
+    write(Stream, ','),
+    write(Stream, Z1),
+    write(Stream, ')),\n'),
+
+
+    equipedWeap(X2, Y2, Z2, W2),
+    write(Stream, 'asserta(equipedWeap('),
+    write(Stream, '\''),
+    write(Stream, X2),
+    write(Stream, '\''),
+    write(Stream, ','),
+    write(Stream, '\''),
+    write(Stream, Y2),
+    write(Stream, '\''),
+    write(Stream, ','),
+    write(Stream, '\''),
+    write(Stream, Z2),
+    write(Stream, '\''),
+    write(Stream, ','),
+    write(Stream, W2),
+    write(Stream, ')),\n'),
+
+    equipedArmor(X3, Y3, Z3, W3),
+    write(Stream, 'asserta(equipedArmor('),
+    write(Stream, '\''),
+    write(Stream, X3),
+    write(Stream, '\''),
+    write(Stream, ','),
+    write(Stream, '\''),
+    write(Stream, Y3),
+    write(Stream, '\''),
+    write(Stream, ','),
+    write(Stream, '\''),
+    write(Stream, Z3),
+    write(Stream, '\''),
+    write(Stream, ','),
+    write(Stream, W3),
+    write(Stream, ')),\n'),
+
+    equipedHead(X4, Y4, Z4, W4),
+    write(Stream, 'asserta(equipedHead('),
+    write(Stream, '\''),
+    write(Stream, X4),
+    write(Stream, '\''),
+    write(Stream, ','),
+    write(Stream, '\''),
+    write(Stream, Y4),
+    write(Stream, '\''),
+    write(Stream, ','),
+    write(Stream, '\''),
+    write(Stream, Z4),
+    write(Stream, '\''),
+    write(Stream, ','),
+    write(Stream, W4),
+    write(Stream, ')),\n'),
+
+    equipedBoots(X5, Y5, Z5, W5),
+    write(Stream, 'asserta(equipedBoots('),
+    write(Stream, '\''),
+    write(Stream, X5),
+    write(Stream, '\''),
+    write(Stream, ','),
+    write(Stream, '\''),
+    write(Stream, Y5),
+    write(Stream, '\''),
+    write(Stream, ','),
+    write(Stream, '\''),
+    write(Stream, Z5),
+    write(Stream, '\''),
+    write(Stream, ','),
+    write(Stream, W5),
+    write(Stream, ')),\n'),
+
+    equipedAcc(X6, Y6, Z6, W6),
+    write(Stream, 'asserta(equipedAcc('),
+    write(Stream, '\''),
+    write(Stream, X6),
+    write(Stream, '\''),
+    write(Stream, ','),
+    write(Stream, '\''),
+    write(Stream, Y6),
+    write(Stream, '\''),
+    write(Stream, ','),
+    write(Stream, '\''),
+    write(Stream, Z6),
+    write(Stream, '\''),
+    write(Stream, ','),
+    write(Stream, W6),
+    write(Stream, ')),\n'),
+
+    write(Stream, 'asserta(bag(['),
+    bag([H|T]),
+    write(Stream, '\''),
+    write(Stream, H),
+    write(Stream, '\''),
+ 	close(Stream),
+    tulisBag(T),
+    tulisAkhir.
+
+load :-
+    retractall(started(_)),
+    retract(pos(player,_,_)),
+    retractall(job(_)),
+    retractall(ekspi(_)),
+    retractall(gold(_)),
+    retractall(currentHP(_)),
+    retractall(questCounter(_)),
+    retractall(notInBattle(_)),
+    retractall(adaQuest(_)),
+    retractall(questFunc(_,_,_)),
+
+    retractall(bag(_)),
+    retractall(equipedWeap(_,_,_,_)),
+    retractall(equipedArmor(_,_,_,_)),
+    retractall(equipedHead(_,_,_,_)),
+    retractall(equipedBoots(_,_,_,_)),
+    retractall(equipedAcc(_,_,_,_)),
+
+ 	consult('saveData.pl'),
+    wr('Loading Data ...'),
+    loadstart,
+    wr('Game succefully loaded').
+
+tulisBag([]).
+tulisBag([H|T]) :-
+    open('saveData.pl', append, Stream),
+    write(Stream, ','),
+    write(Stream, '\''),
+    write(Stream, H),
+    write(Stream, '\''),
+    close(Stream),
+    tulisBag(T).
+    
+tulisAkhir :-
+    open('saveData.pl', append, Stream),
+    write(Stream, '])).\n'),
+    close(Stream).
