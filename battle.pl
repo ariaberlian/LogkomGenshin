@@ -242,7 +242,7 @@ potion(1) :-
 	
 	potion(0, health+15),
 	write ('Health Potion (S) sudah habis.. :(')
-	battle.
+	rebattle.
 
 
 potion(2) :-
@@ -260,7 +260,7 @@ potion(2) :-
 	
 	potion(0, health+25),
 	write ('Health Potion (M) sudah habis.. :('),
-	battle.
+	rebattle.
 
 potion(3) :-
 	
