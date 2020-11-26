@@ -797,6 +797,7 @@ setEnemy(X) :-
 %% DRAGON
 setEnemy(X) :-
 	X = 3,
+    setNotInBattle(0),
 	write('Is it the final battle??!!!'), nl,
     gambar(naga), nl,
     retractall(enemyLevel(_)),
@@ -812,6 +813,7 @@ setEnemy(X) :-
     asserta(skillCDCounter(2)),
     asserta(ultCDCounter(3)), nl, nl,
     attack,
+    fail,
 	!.
 
 %% MENEMUKAN ENEMY di WOLF AREA
@@ -845,7 +847,7 @@ randomEnemy(Arah) :-
 
 boosPos(X, Y) :-
 	pos(boss, X, Y),
-	setEnemy(3),
+	\+setEnemy(3),
 	!.
 
 inWolfArea :-
