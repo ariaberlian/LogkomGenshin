@@ -256,8 +256,8 @@ start :-
     wr('[Jelajahilah dunia ini....'),
     wr('temuilah Aku jika kamu sudah siap]'),
     wr('...'),
-    write('>> '),
-    read(_),
+    write('Apakah anda siap? >> '),
+    read(_), nl,
     wr('...Dewi itu menghilang seketika'),
     wr('"tunggu!!! dimana aku harus mencarimu?"'),
     wr('...'),
@@ -875,7 +875,6 @@ move(X1, Y1) :-
 
 
 run :-
-	\+enemy(dragon),
 	setNotInBattle(1),
 	write('Are you afraid ?!!'), nl,
     gambar(running),
@@ -1427,8 +1426,7 @@ pengecekanEnemyHP(DMGDEALT) :-
     enemy(MONSTER),
     questFunc(X,Y,Z),
     (
-        NewEnemyHP =<0, enemy(dragon) -> !, asserta(isDragonDead(true)), wr('Anda telah mengalahkan NAGA!'),wr('.'),wr('.'),wr('.'),wr('Ketik apa saja untuk melanjutkan...'), write('>> '),read(_),wr('Anda mendekati naga itu...'),write('>> '),
-        read(_),wr('"Kemarilah bocah...." sang naga berbicara'),write('>> '),read(_),wr('Kalahkan dewi itu, atau...'), write('>> '), read(_), wr('Uhhuk-uhhuk-uhhuk...'), write('>> '),read(_),wr('atau kau akan ................'),nl,nl,nl,wr('COMING "VERY" SOON, GENSHIN SEKAI II Forgotten God'),wr('~Fin'), asserta(isDragonDead(true)),fail;
+        NewEnemyHP =<0, enemy(dragon) -> !, asserta(isDragonDead(true)), wr('Anda telah mengalahkan NAGA!'),wr('.'),wr('.'),wr('.'),wr('Ketik apa saja untuk melanjutkan...'), write('>> '),read(_),wr('Anda mendekati naga itu...'),nl,nl,wr('"Kemarilah bocah...." sang naga berbicara'),nl,wr('Kalahkan dewi itu, atau...'), nl, wr('Uhhuk-uhhuk-uhhuk...'),nl,wr('atau kau akan ................'),nl,nl,nl,wr('COMING "VERY" SOON, GENSHIN SEKAI II Forgotten God'),wr('~Fin'), asserta(isDragonDead(true)),fail;
         NewEnemyHP =< 0 -> !, NewGold is GOLD + GOLD1, NewXP is XP + XP1, retractall(ekspi(_)), retractall(gold(_)), asserta(gold(NewGold)), asserta(ekspi(NewXP)), level(NewLevel), fungsiRefreshDarah(OldLevel, NewLevel), retractall(enemyCurrentHP(_)), wr('Musuh telah mati,'), write('Anda Mendapatkan '), write(GOLD1), write(' Gold & '), write(XP1), wr('EXP!'),setNotInBattle(1),
         (
             MONSTER = goblin -> !, X1 is X-1, retractall(questFunc(_,_,_)), asserta(questFunc(X1,Y,Z));
