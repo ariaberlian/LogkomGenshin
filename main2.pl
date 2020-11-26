@@ -1879,7 +1879,7 @@ gambar(wolf) :-
 
 
 save :-
-    \+ started(true),
+    started(true),
     notInBattle(true),
     write('Saving Data ...'),
 	open('saveData.pl', write, Stream),
