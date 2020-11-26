@@ -39,9 +39,9 @@ save :-
 	open('saveData.pl', write, Stream),
 	write(Stream, ':- dynamic(pos/3).\n'),
 
-    write(Stream, ':-dynamic(job/1).\n'),
-    write(Stream, ':-dynamic(ekspi/1).\n'),
-    write(Stream, ':-dynamic(gold/1).\n'),
+    write(Stream, ':- dynamic(job/1).\n'),
+    write(Stream, ':- dynamic(ekspi/1).\n'),
+    write(Stream, ':- dynamic(gold/1).\n'),
     write(Stream, ':- dynamic(notInBattle/1).\n'),
 
     write(Stream, ':- dynamic(questFunc/3).\n'),
