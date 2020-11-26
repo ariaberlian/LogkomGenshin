@@ -204,9 +204,9 @@ grade('SS', 'Fiesta SpicyChikenWings', 10).
 %% Setelah dicompile, maka user harus melakukan "start." terlebih dahulu
 start :-
 	retract(pos(player, _, _)),
-	retract(enemy(_)),
-	retract(notInBattle(_)),
-	retract(started(_)),
+	retractall(enemy(_)),
+	retractall(notInBattle(_)),
+	retractall(started(_)),
     retractall(jobFound(_)),
     retractall(questFunc(_,_,_)),
     asserta(questFunc(0,0,0)),
