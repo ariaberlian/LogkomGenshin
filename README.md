@@ -9,6 +9,6 @@
 
 ## Cara eksekusi program : 
 1. Install prolog
-2. Consult file main.pl
+2. Consult file main2.pl
 3. Masukkan command "start." untuk memulai permainan
 4. Masukkan command "load." untuk memuat kembali data yang sudah pernah disimpan
