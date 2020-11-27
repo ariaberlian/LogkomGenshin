@@ -1,7 +1,7 @@
 # Genshin Sekai
 
 ## Kelompok 9 - K3
-'' 13519051 - Yudi Alfayat
+' ' 13519051 - Yudi Alfayat
 
 
 Cara eksekusi program : 
