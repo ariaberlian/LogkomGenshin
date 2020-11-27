@@ -7,7 +7,8 @@
 - 13519219 - Raffi Fadhlurrahman Putra Rahiem
 
 
-Cara eksekusi program : 
-1. install prolog
-2. consult file main.pl
-3. masukkan "start." untuk memulai permainan.
+## Cara eksekusi program : 
+1. Install prolog
+2. Consult file main.pl
+3. Masukkan command "start." untuk memulai permainan
+4. Masukkan command "load." untuk memuat kembali data yang sudah pernah disimpan
