@@ -1557,12 +1557,18 @@ questto :-
 
 quest :- 
     adaQuest(true),
-    questFunc(X,Y,Z), nl, X1 is X, Y1 is Y, Z1 is Z,
+    questFunc(X,Y,Z), nl,
     (
-        X < 0 -> X1 is 0;
-        Y < 0 -> Y1 is 0;
-        Z < 0 -> Z1 is 0;
-        true
+        X >= 0 ->!, X1 is X;
+        X < 0 -> X1 is 0
+    ),
+    (
+        Y >= 0 ->!, Y1 is Y;
+        Y < 0 -> Y1 is 0
+    ),
+    (
+        Z >= 0 ->!, Z1 is Z;
+        Z < 0 -> Z1 is 0
     ),
     write('>> Membunuh '), write(X1), write(' Goblin, '), write(Y1), write(' Slime, '), write(Z1), write(' Wolf.'),nl,!.
     
