@@ -540,12 +540,14 @@ usePot(Name, Stat, StatNum) :-
     count(Name, Bag, Num),
     finalSTATS(_,_,_, MAXHP),
     (
-        Num = 0 -> write('Potion tidak ada dalam inventory! Haha panik panik dia panik');
+        Num = 0 -> !, write('Potion tidak ada dalam inventory! Haha panik panik dia panik');
         throw(Name, Bag, Res),retract(bag(_)),asserta(bag(Res)),
-        (Stat = 'recover Hp' -> HPRegenerated is round(MAXHP*(StatNum/100)+ 0.01), fungsiHeal(HPRegenerated, NewHP), write('HP Anda terpulihkan sebanyak: '),wr(NewHP);true),
-        (Stat = 'atk' -> retract(equipedPOT(_)), asserta(equipedPOT(atk)) ; true),
-        (Stat = 'def' -> retract(equipedPOT(_)), asserta(equipedPOT(def)) ; true),
-        (Stat = 'int' -> retract(equipedPOT(_)), asserta(equipedPOT(int)) ; true)
+        (
+            Stat = 'recover Hp' ->!,  HPRegenerated is round(MAXHP*(StatNum/100)+ 0.01), fungsiHeal(HPRegenerated, NewHP), write('HP Anda terpulihkan sebanyak: '),wr(NewHP);
+            Stat = 'atk' ->!, retractall(equipedPOT(_)), asserta(equipedPOT(atk)), wr('Rage Potion Terpakai');
+            Stat = 'def' ->!, retractall(equipedPOT(_)), asserta(equipedPOT(def)), wr('Rock Potion Terpakai');
+            Stat = 'int' ->!, retractall(equipedPOT(_)), asserta(equipedPOT(int)), wr('Smart Potion Terpakai')
+        )
     ),
     decCountBag,!.
 
@@ -1420,7 +1422,7 @@ attackOption(3,_,_,ULTCD) :-
     wr('Burst dalam Cooldown'), nl,!, attack, fail.
 
 attackOption(4,_,_,_) :-
-    usepotion,nl, nl, attack,!.
+    !, usepotion,nl, nl, attack.
 
 attackOption(5,_,_,_) :-
     status, nl, nl, attack,!.
@@ -1949,8 +1951,12 @@ save :-
 
     write('Saving Data ...'),
 	open(NamaFile, write, Stream),
-    write(Stream, 'loadstart :-\n'),
+    (
+        Input = 1 -> !, write(Stream, 'loadstart1 :-\n');
+        Input = 2 -> !, write(Stream, 'loadstart2 :-\n');
+        Input = 3 -> !, write(Stream, 'loadstart3 :-\n')
 
+    ),
     started(Started),
     write(Stream, 'asserta(started('),
     write(Stream, Started),
@@ -2145,7 +2151,12 @@ load :-
     retractall(equipedAcc(_,_,_,_)),
 
     wr('Loading Data ...'),
-    loadstart,
+    (
+        Input = 1 -> !, loadstart1;
+        Input = 2 -> !, loadstart2;
+        Input = 3 -> !, loadstart3
+
+    ),
     wr('Game succefully loaded'),nl,
     wr('This is the isekai map:'),
     map,nl.
