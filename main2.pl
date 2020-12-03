@@ -1938,8 +1938,17 @@ gambar(wolf) :-
 save :-
     started(true),
     notInBattle(true),
+    wr('Pilih Slot save file (1-3)'),
+    write('>> '), read(Input),
+    (
+        Input = 1 -> !, atom_concat('saveData', '1.pl', NamaFile);
+        Input = 2 -> !, atom_concat('saveData', '2.pl', NamaFile);
+        Input = 3 -> !, atom_concat('saveData', '3.pl', NamaFile);
+        wr('Gagal Menyimpan file!'), fail
+    ),
+
     write('Saving Data ...'),
-	open('saveData.pl', write, Stream),
+	open(NamaFile, write, Stream),
     write(Stream, 'loadstart :-\n'),
 
     started(Started),
@@ -2102,12 +2111,20 @@ save :-
     write(Stream, H),
     write(Stream, '\''),
  	close(Stream),
-    tulisBag(T),
-    tulisAkhir, nl,
+    tulisBag(T, NamaFile),
+    tulisAkhir(NamaFile), nl,
     wr('GAME SUCCESFULLY SAVED').
 
 load :-
-    consult('saveData.pl'),
+    wr('Pilih Slot save file (1-3)'),
+    write('>> '), read(Input),
+    (
+        Input = 1 -> !, atom_concat('saveData', '1.pl', NamaFile);
+        Input = 2 -> !, atom_concat('saveData', '2.pl', NamaFile);
+        Input = 3 -> !, atom_concat('saveData', '3.pl', NamaFile);
+        wr('Gagal menload file!'), fail
+    ),
+    consult(NamaFile),
     retractall(started(_)),
     retract(pos(player,_,_)),
     retractall(job(_)),
@@ -2133,18 +2150,18 @@ load :-
     wr('This is the isekai map:'),
     map,nl.
 
-tulisBag([]).
-tulisBag([H|T]) :-
-    open('saveData.pl', append, Stream),
+tulisBag([], _).
+tulisBag([H|T], NamaFile) :-
+    open(NamaFile, append, Stream),
     write(Stream, ','),
     write(Stream, '\''),
     write(Stream, H),
     write(Stream, '\''),
     close(Stream),
-    tulisBag(T).
+    tulisBag(T, NamaFile).
     
-tulisAkhir :-
-    open('saveData.pl', append, Stream),
+tulisAkhir(NamaFile) :-
+    open(NamaFile, append, Stream),
     write(Stream, '])).\n'),
     close(Stream).
 
